@@ -4,7 +4,6 @@ runner
 compile_commands.json
 .cache
 .vscode
-makefile
 
 # Prerequisites
 *.d
