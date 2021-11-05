@@ -9,7 +9,7 @@ IsingModel::IsingModel(int lattice_length){
     set_energy();
 }
 
-// Placeholder initialise function.
+// Placeholder initialisations function.
 void IsingModel::initialise_spins(int L){
     vector<vector<int>> initial(L, vector<int>(L, 1));
     for (int i=0; i<L; i++){
