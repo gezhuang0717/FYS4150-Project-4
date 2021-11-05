@@ -4,6 +4,7 @@ runner
 compile_commands.json
 .cache
 .vscode
+venv
 
 # Prerequisites
 *.d

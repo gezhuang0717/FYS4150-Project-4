@@ -46,6 +46,9 @@ dirs:
 	@mkdir -p $(dir $(OBJECTS))
 	@mkdir -p $(BIN_PATH)
 
+plots:
+	@python src/run.py -a
+
 .PHONY: clean
 clean:
 	@echo "Deleting $(BIN_NAME) symlink"
