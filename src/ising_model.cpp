@@ -1,12 +1,15 @@
 #include "project4/ising_model.hpp"
 
-IsingModel::IsingModel(int lattice_length){
+IsingModel::IsingModel(int lattice_length, double T){
+    L = lattice_length;
+    beta = 1/T; 
     int seed = 7773;
     rng = mt19937(seed);
-    L = lattice_length;
     rand_index = uniform_int_distribution<int>(0, L-1);
+    uniform = uniform_real_distribution<double>(0, 1);
     initialise_spins(L);
     set_energy();
+    set_magnetisation();
 }
 
 // Placeholder initialisations function.
@@ -33,6 +36,20 @@ void IsingModel::set_energy(){
     E = energy;
 }
 
+void IsingModel::set_magnetisation(){
+    int magnetisation = 0;
+    for (int i=0; i<L; i++){
+        for (int j=0; j<L; j++){
+            magnetisation += spins[i][j];
+        }
+    }
+    M = magnetisation;
+}
+
+int IsingModel::get_magnetisation(){
+    return M;
+}
+
 int IsingModel::get_energy(){
     return E;
 }
@@ -51,20 +68,23 @@ void IsingModel::metropolis(){
 
             // Compute energy difference for spin flip
 
-            // Får segmentation fault her pga. % er remainder-operator
-            // og ikke modulo, så får negative indekser. Skal fikse senere.
+
             delta_E = 2*spins[ix][iy] *(spins[ix][(iy+1)%L]
-                                        + spins[ix][(iy-1)%L]
+                                        + spins[ix][(iy-1+L)%L]
                                         + spins[(ix+1)%L][iy]
-                                        + spins[(ix-1)%L][iy]);
+                                        + spins[(ix-1+L)%L][iy]);
 
-            // To be continued:
-
+            //compute exp(-beta*delta_E)
+            double w = exp(-beta * (double)delta_E);
+            double r = uniform(rng);
             // Check if spin should be flipped
-            if (...){
+            if (delta_E < 0 or r <= w){
                 // Flip spin
-                ...
+                spins[i][j] *= -1;
                 // Update energy
+                E += delta_E;
+                // Update magnetisation
+                M += 2*spins[i][j];
             }
         }
         
