@@ -58,7 +58,7 @@ void IsingModel::metropolis(){
                                         + spins[(ix+1)%L][iy]
                                         + spins[(ix-1)%L][iy]);
 
-            // To be implemented:
+            // To be continued:
 
             // Check if spin should be flipped
             if (...){
