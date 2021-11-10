@@ -7,13 +7,13 @@ IsingModel::IsingModel(int lattice_length, double T){
     rng = mt19937(seed);
     rand_index = uniform_int_distribution<int>(0, L-1);
     uniform = uniform_real_distribution<double>(0, 1);
-    initialise_spins(L);
+    initialize_spins(L);
     set_energy();
     set_magnetisation();
 }
 
 // Placeholder initialisations function.
-void IsingModel::initialise_spins(int L){
+void IsingModel::initialize_spins(int L){
     vector<vector<int>> initial(L, vector<int>(L, 1));
     for (int i=0; i<L; i++){
         for (int j=0; j<L; j++){
@@ -60,34 +60,28 @@ vector<vector<int>> IsingModel::get_spins(){
 
 void IsingModel::metropolis(){
     int ix, iy, delta_E;
-    for (int i=0; i<L; i++){
-        for (int j=0; j<L; j++){
-            // Draw 2 random indices
-            ix = rand_index(rng);
-            iy = rand_index(rng);
-
-            // Compute energy difference for spin flip
-
-
-            delta_E = 2*spins[ix][iy] *(spins[ix][(iy+1)%L]
-                                        + spins[ix][(iy-1+L)%L]
-                                        + spins[(ix+1)%L][iy]
-                                        + spins[(ix-1+L)%L][iy]);
-
-            //compute exp(-beta*delta_E)
-            double w = exp(-beta * (double)delta_E);
-            double r = uniform(rng);
-            // Check if spin should be flipped
-            if (delta_E < 0 or r <= w){
-                // Flip spin
-                spins[i][j] *= -1;
-                // Update energy
-                E += delta_E;
-                // Update magnetisation
-                M += 2*spins[i][j];
-            }
+    for (int _ = 0; _ < L * L; _++){
+        // Draw 2 random indices
+        ix = rand_index(rng);
+        iy = rand_index(rng);
+        // Compute energy difference for spin flip
+        delta_E = -2 * spins[ix][iy] * (spins[ix][(iy + 1) % L]
+                                    + spins[ix][(iy - 1 + L) % L]
+                                    + spins[(ix + 1) % L][iy]
+                                    + spins[(ix - 1 + L) % L][iy]);
+        //compute exp(-beta*delta_E)
+        // TODO: replace with pre-computed lookup
+        double w = exp(-beta * (double)delta_E);
+        double r = uniform(rng);
+        // Check if spin should be flipped
+        if (delta_E < 0 or r <= w){
+            // Flip spin
+            spins[ix][iy] *= -1;
+            // Update energy
+            E = delta_E;
+            // Update magnetisation
+            M += 2 * spins[ix][iy];
         }
-        
     }
 
 }

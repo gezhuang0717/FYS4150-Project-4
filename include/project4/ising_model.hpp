@@ -26,7 +26,7 @@ class IsingModel{
     private:
         // Called by constructor to initialise 2D vector of spins.
         // (currently a placeholder-function that sets every other spin equal to -1)
-        void initialise_spins(int L);
+        void initialize_spins(int L);
         mt19937 rng;
         uniform_int_distribution<int> rand_index;
         uniform_real_distribution<double> uniform;
