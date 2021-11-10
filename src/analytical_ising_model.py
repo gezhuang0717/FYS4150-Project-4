@@ -4,8 +4,13 @@ import numpy as np
 
 class AnalyticalIsingModel:
     def __init__(self, filename: str, temperature: float, L=2):
+<<<<<<< HEAD
+        self.L = L
+        self.N = L * L
+=======
         self._L = L
         self._N = L ** 2
+>>>>>>> 38ae73f6de9bab1c45784d9aadbf27c45f67a630
         self._T = temperature
         self._beta = 1 / self._T  # Boltzman-constant?
         self._states = pd.read_csv(filename)

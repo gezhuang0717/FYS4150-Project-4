@@ -23,15 +23,25 @@ int test2x2(){
     double T = 10;
     IsingModel model(L, T);
     int sampled_E[N];
+    int sampled_M[N];
     for (int i = -10000; i < N; i++){
         model.metropolis();
         if (i < 0) continue;
         sampled_E[i] = model.get_energy();
+        sampled_M[i] = model.get_magnetisation();
     }
-    map<int, float> buckets = probability_distrubution(sampled_E, N);
-    for (auto const& bucket : buckets){
+    map<int, float> buckets_E = probability_distrubution(sampled_E, N);
+    map<int, float> buckets_M = probability_distrubution(sampled_M, N);
+    for (auto const& bucket : buckets_E){
         cout << bucket.first << ": " << bucket.second << endl;
     }
+    cout << "------" << endl;
+    float E_M = 0;
+    for (auto const& bucket : buckets_M){
+        cout << bucket.first << ": " << bucket.second << endl;
+        E_M += bucket.first * bucket.second;
+    }
+    cout << E_M << endl;
 }
 
 int main(){
