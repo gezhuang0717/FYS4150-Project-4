@@ -26,7 +26,6 @@ int test2x2(){
     for (int i = 0; i < N; i++){
         model.metropolis();
         sampled_E[i] = model.get_energy();
-        cout << model.get_energy() << endl;
     }
     map<int, float> buckets = probability_distrubution(sampled_E, N);
     for (auto const& bucket : buckets){
