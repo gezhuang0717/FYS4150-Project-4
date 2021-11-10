@@ -18,13 +18,14 @@ map<int, float> probability_distrubution(int *samples, int N){
 }
 
 int test2x2(){
-    const int N = 100;
+    const int N = 100000;
     int L = 2;
     double T = 10;
     IsingModel model(L, T);
     int sampled_E[N];
-    for (int i = 0; i < N; i++){
+    for (int i = -10000; i < N; i++){
         model.metropolis();
+        if (i < 0) continue;
         sampled_E[i] = model.get_energy();
     }
     map<int, float> buckets = probability_distrubution(sampled_E, N);
@@ -34,29 +35,5 @@ int test2x2(){
 }
 
 int main(){
-    int L = 2;
-    double T = 10;
-    IsingModel model(L, T);
-    vector<vector<int>> spins = model.get_spins();
-    for (int i=0; i<L; i++){
-        for (int j=0; j<L; j++){
-            cout << spins[i][j] << " ";
-        }
-        cout << "\n";
-    }
-    cout << "energy: " << model.get_energy() <<  "\n";
-
-    model.metropolis();
-    model.metropolis();
-    model.metropolis();
-
-    spins = model.get_spins();
-    for (int i=0; i<L; i++){
-        for (int j=0; j<L; j++){
-            cout << spins[i][j] << " ";
-        }
-        cout << "\n";
-    }
-
     test2x2();
 }

@@ -9,7 +9,8 @@ class AnalyticalIsingModel:
         self._beta = 1 / self._T # Boltzman-constant?
         self._states = pd.read_csv(filename)
         self._Z = np.sum(np.exp(-self._beta * self._states["E(s)"]))
-        self.expected_epsilon = np.sum(self._states["E(s)"] * self.p(self._states["E(s)"])) / self._N
+        self.expected_E = np.sum(self._states["E(s)"] * self.p(self._states["E(s)"]))
+        self.expected_epsilon = self.expected_E / self._N
 
     def p(self, E_s):
         return 1/self._Z * np.exp(-self._beta * E_s)
@@ -18,6 +19,6 @@ class AnalyticalIsingModel:
 
 if __name__ == "__main__":
     aim = AnalyticalIsingModel("output/state_summary.csv", 10)
-    print(aim.expected_epsilon)
+    print(aim.expected_E)
 
 
