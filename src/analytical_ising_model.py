@@ -3,17 +3,20 @@ import numpy as np
 
 
 class AnalyticalIsingModel:
-    #  _N = 4
-    #  _L = 2
     def __init__(self, filename: str, temperature: float, L=2):
+<<<<<<< HEAD
         self.L = L
         self.N = L * L
+=======
+        self._L = L
+        self._N = L ** 2
+>>>>>>> 38ae73f6de9bab1c45784d9aadbf27c45f67a630
         self._T = temperature
         self._beta = 1 / self._T  # Boltzman-constant?
         self._states = pd.read_csv(filename)
-        #  self._Z = np.sum(np.exp(-self._beta * self._states["E(s)"]))
-        #  self.expected_E = np.sum(self._states["E(s)"] * self.p(self._states["E(s)"]))
-        #  self.expected_epsilon = self.expected_E / self.N
+
+    def p(self, E_s):
+        return 1 / self.Z * np.exp(-self._beta * E_s)
 
     @property
     def Z(self):
@@ -24,23 +27,36 @@ class AnalyticalIsingModel:
         return np.sum(self._states["E(s)"] * self.p(self._states["E(s)"]))
 
     @property
-    def expected_M(self):
-        return np.sum(np.abs(self._states["M(s)"]) * self.p(self._states["E(s)"]))
+    def expected_epsilon(self):
+        return self.expected_E / self._N
 
     @property
-    def expected_epsilon(self):
-        return self.expected_E / self.N
+    def expected_absolute_m(self):
+        return (
+            np.sum(np.abs(self._states["M(s)"]) * self.p(self._states["E(s)"]))
+            / self._N
+        )
 
     @property
-    def expected_epsilon(self):
-        return self.expected_E / self.N
+    def expected_E_squared(self):
+        return np.sum((self._states["E(s)"] ** 2) * self.p(self._states["E(s)"]))
 
-    def p(self, E_s):
-        return 1 / self.Z * np.exp(-self._beta * E_s)
+    @property
+    def expected_epsilon_squared(self):
+        return self.expected_E_squared / (self._N * self._N)
+
+    @property
+    def expected_m_squared(self):
+        return np.sum((self._states["M(s)"] ** 2) * self.p(self._states["E(s)"])) / (
+            self._N * self._N
+        )
 
 
 if __name__ == "__main__":
-    aim = AnalyticalIsingModel("output/state_summary.csv", 10)
+    aim = AnalyticalIsingModel("output/state_summary.csv", temperature=10)
     print(aim.expected_E)
-    print(aim.expected_M)
     print(aim.expected_epsilon)
+    print(aim.expected_epsilon_squared)
+
+    print(aim.expected_absolute_m)
+    print(aim.expected_m_squared)
