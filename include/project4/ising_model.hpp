@@ -23,6 +23,7 @@ class IsingModel{
         // for debugging later.
         void set_magnetisation();
         int get_magnetisation();
+        void print();
     private:
         // Called by constructor to initialise 2D vector of spins.
         // (currently a placeholder-function that sets every other spin equal to -1)

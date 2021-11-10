@@ -3,8 +3,9 @@
 IsingModel::IsingModel(int lattice_length, double T){
     L = lattice_length;
     beta = 1/T; 
-    int seed = 7773;
-    rng = mt19937(seed);
+    // int seed = 7773;
+    // rng = mt19937(seed);
+    rng = mt19937(14);
     rand_index = uniform_int_distribution<int>(0, L-1);
     rand_1_or_0 = uniform_int_distribution<int>(0, 1);
     uniform = uniform_real_distribution<double>(0, 1);
@@ -28,8 +29,8 @@ void IsingModel::set_energy(){
     int energy = 0;
     for (int i=0; i<L; i++){
         for (int j=0; j<L; j++){
-            energy += spins[i][j] * spins[(i+1)%L][j];
-            energy += spins[i][j] * spins[i][(j+1)%L];
+            energy += - spins[i][j] * spins[(i+1)%L][j];
+            energy += - spins[i][j] * spins[i][(j+1)%L];
         }
     }
     E = energy;
@@ -73,7 +74,7 @@ void IsingModel::metropolis(){
         double w = exp(-beta * (double)delta_E);
         double r = uniform(rng);
         // Check if spin should be flipped
-        if (delta_E < 0 or r <= w){
+        if (r <= w){
             // Flip spin
             spins[ix][iy] *= -1;
             // Update energy
@@ -82,5 +83,13 @@ void IsingModel::metropolis(){
             M += 2 * spins[ix][iy];
         }
     }
+}
 
+void IsingModel::print(){
+    for (int i=0; i<L; i++){
+        for (int j=0; j<L; j++){
+            cout << spins[i][j] << " ";
+        }
+        cout << "\n";
+    }
 }
