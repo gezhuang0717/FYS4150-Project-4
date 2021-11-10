@@ -7,7 +7,7 @@ class AnalyticalIsingModel:
     #  _L = 2
     def __init__(self, filename: str, temperature: float, L=2):
         self.L = L
-        self.N = L ** 2
+        self.N = L * L
         self._T = temperature
         self._beta = 1 / self._T  # Boltzman-constant?
         self._states = pd.read_csv(filename)
