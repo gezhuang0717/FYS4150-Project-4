@@ -1,4 +1,5 @@
 #include "project4/ising_model.hpp"
+#include "project4/map_utils.hpp"
 
 #include <iostream>
 #include <vector>
@@ -7,43 +8,38 @@
 
 using namespace std;
 
-map<int, float> probability_distrubution(int *samples, int N){
-    map<int, float> buckets;
-    for (int i = 0; i < N; i++){
-        int sample = samples[i];
-        buckets.emplace(sample, 0);
-        buckets[sample] += 1./N;
-    }
-    return buckets;
-}
 
-int test2x2(){
-    const int N = 100000;
-    int L = 2;
-    double T = 10;
+void produce_distributions(const int N, int L, double T, int burn_in_time = 1000){ // note we don't have any indications on what the burn_in_time is yet
     IsingModel model(L, T);
     int sampled_E[N];
     int sampled_M[N];
-    for (int i = -10000; i < N; i++){
+    for (int i = -burn_in_time; i < N; i++){
         model.metropolis();
         if (i < 0) continue;
         sampled_E[i] = model.get_energy();
         sampled_M[i] = model.get_magnetisation();
     }
-    map<int, float> buckets_E = probability_distrubution(sampled_E, N);
-    map<int, float> buckets_M = probability_distrubution(sampled_M, N);
-    for (auto const& bucket : buckets_E){
-        cout << bucket.first << ": " << bucket.second << endl;
-    }
+    map<int, float> buckets_E = map_utils::distribution(sampled_E, N);
+    map<int, float> buckets_M = map_utils::distribution(sampled_M, N);
+    cout << "Sampled distribution of E" << endl;
+    map_utils::print_map(buckets_E);
+    cout << "Sampled expected E: " << map_utils::expected_value(buckets_E) << endl;
     cout << "------" << endl;
-    float E_M = 0;
-    for (auto const& bucket : buckets_M){
-        cout << bucket.first << ": " << bucket.second << endl;
-        E_M += bucket.first * bucket.second;
-    }
-    cout << E_M << endl;
+    cout << "Sampled distribution of M" << endl;
+    float E_M = map_utils::expected_value(buckets_M);
+    map_utils::print_map(buckets_M);
+    cout << "Sampled expected M: " << E_M << endl;
+}
+
+
+
+void test2x2(){
+    const int N = 100000;
+    int L = 2;
+    double T = 10;
+    produce_distributions(N, L, T);
 }
 
 int main(){
-    test2x2();
+    produce_distributions(10000, 10, 10.);
 }

@@ -4,13 +4,8 @@ import numpy as np
 
 class AnalyticalIsingModel:
     def __init__(self, filename: str, temperature: float, L=2):
-<<<<<<< HEAD
-        self.L = L
-        self.N = L * L
-=======
         self._L = L
         self._N = L ** 2
->>>>>>> 38ae73f6de9bab1c45784d9aadbf27c45f67a630
         self._T = temperature
         self._beta = 1 / self._T  # Boltzman-constant?
         self._states = pd.read_csv(filename)
@@ -80,9 +75,10 @@ class Superanalytical:
 if __name__ == "__main__":
     aim = AnalyticalIsingModel("output/state_summary.csv", temperature=1)
     sup = Superanalytical("output/state_summary.csv", temperature=1)
-    print(aim.Z - sup.Z)
-    print(aim.expected_E - sup.expected_E)
-    print(aim.expected_abs_M - sup.expected_abs_M)
+    print(" ")
+    print(aim.Z)
+    print(aim.expected_E)
+    print(aim.expected_magnitization)
     #  print(aim.expected_E)
     #  print(aim.expected_epsilon)
     #  print(aim.expected_epsilon_squared)

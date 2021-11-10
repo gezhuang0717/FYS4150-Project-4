@@ -5,7 +5,7 @@ IsingModel::IsingModel(int lattice_length, double T){
     beta = 1/T; 
     // int seed = 7773;
     // rng = mt19937(seed);
-    rng = mt19937(14);
+    rng = mt19937(69);
     rand_index = uniform_int_distribution<int>(0, L-1);
     rand_1_or_0 = uniform_int_distribution<int>(0, 1);
     uniform = uniform_real_distribution<double>(0, 1);
