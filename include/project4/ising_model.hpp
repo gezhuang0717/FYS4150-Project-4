@@ -29,6 +29,7 @@ class IsingModel{
         void initialize_spins(int L);
         mt19937 rng;
         uniform_int_distribution<int> rand_index;
+        uniform_int_distribution<int> rand_1_or_0;
         uniform_real_distribution<double> uniform;
         vector<vector<int>> spins;
         int L;

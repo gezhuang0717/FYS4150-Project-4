@@ -6,6 +6,7 @@ IsingModel::IsingModel(int lattice_length, double T){
     int seed = 7773;
     rng = mt19937(seed);
     rand_index = uniform_int_distribution<int>(0, L-1);
+    rand_1_or_0 = uniform_int_distribution<int>(0, 1);
     uniform = uniform_real_distribution<double>(0, 1);
     initialize_spins(L);
     set_energy();
@@ -17,9 +18,7 @@ void IsingModel::initialize_spins(int L){
     vector<vector<int>> initial(L, vector<int>(L, 1));
     for (int i=0; i<L; i++){
         for (int j=0; j<L; j++){
-            if ((i+j)%2 == 0){
-                initial[i][j] = -1 * initial[i][j];
-            }
+            initial[i][j] = initial[i][j] -2*rand_1_or_0(rng);
         }
     }
     spins = initial;
@@ -65,7 +64,7 @@ void IsingModel::metropolis(){
         ix = rand_index(rng);
         iy = rand_index(rng);
         // Compute energy difference for spin flip
-        delta_E = -2 * spins[ix][iy] * (spins[ix][(iy + 1) % L]
+        delta_E = 2 * spins[ix][iy] * (spins[ix][(iy + 1) % L]
                                     + spins[ix][(iy - 1 + L) % L]
                                     + spins[(ix + 1) % L][iy]
                                     + spins[(ix - 1 + L) % L][iy]);
@@ -78,7 +77,7 @@ void IsingModel::metropolis(){
             // Flip spin
             spins[ix][iy] *= -1;
             // Update energy
-            E = delta_E;
+            E += delta_E;
             // Update magnetisation
             M += 2 * spins[ix][iy];
         }
