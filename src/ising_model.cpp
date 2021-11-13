@@ -1,8 +1,9 @@
 #include "project4/ising_model.hpp"
 
-IsingModel::IsingModel(int lattice_length, double T){
+IsingModel::IsingModel(int lattice_length, double T, bool random_spins){
     L = lattice_length;
     beta = 1/T; 
+    rand_spins = random_spins;
     // int seed = 7773;
     // rng = mt19937(seed);
     rng = mt19937(69);
@@ -17,9 +18,11 @@ IsingModel::IsingModel(int lattice_length, double T){
 // Placeholder initialisations function.
 void IsingModel::initialize_spins(int L){
     vector<vector<int>> initial(L, vector<int>(L, 1));
-    for (int i=0; i<L; i++){
-        for (int j=0; j<L; j++){
-            initial[i][j] = initial[i][j] -2*rand_1_or_0(rng);
+    if (rand_spins){
+        for (int i=0; i<L; i++){
+            for (int j=0; j<L; j++){
+                initial[i][j] = initial[i][j] - 2*rand_1_or_0(rng);
+            }
         }
     }
     spins = initial;
