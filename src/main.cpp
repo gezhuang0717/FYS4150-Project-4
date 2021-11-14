@@ -42,34 +42,37 @@ void find_burn_in_time(int N, int L=20, double T=1){
 
 
 /**
- * @brief Produces sampled distribution of &epsilon; and m, and estimates for <&eplsilon;>, <|m|>, C_v and &chi 
+ * @brief Produces sampled distribution of &epsilon; and m, and estimates for <&epsilon;>, <|m|>, C_v and &chi; 
  * 
  * @param N Numbers of MCMC-iterations
  * @param L Size of the Lattice (will have L * L elements)
  * @param T Temprature
  * @param burn_in_time Number of iterations to discard when producing estimates 
  */
-void produce_distributions(const int N, const int L, double T, int burn_in_time = 1000){ // note we don't have any indications on what the burn_in_time is yet
+void produce_distributions(const int iters, const int L, double T, int burn_in_time = 1000){ // note we don't have any indications on what the burn_in_time is yet
     IsingModel model(L, T, true);
-    int sampled_energy[N];
-    int sampled_magnetization_abs[N];
-    for (int i = -burn_in_time; i < N; i++){
+    const int N = L * L;
+    int sampled_energy[iters];
+    int sampled_magnetization_abs[iters];
+    for (int i = -burn_in_time; i < iters; i++){
         model.metropolis();
         if (i < 0) continue;
         sampled_energy[i] = model.get_energy();
         sampled_magnetization_abs[i] = abs(model.get_magnetization());
     }
-    auto scale = [L](int x){return x / (L * L);};
-    map<int, float> buckets_epsilon = stat_utils::distribution(sampled_energy, N, scale);
-    map<int, float> buckets_m_abs = stat_utils::distribution(sampled_magnetization_abs, N, scale);
+    auto scale = [N](int x){return x / N;};
+    map<int, float> buckets_epsilon = stat_utils::distribution(sampled_energy, iters, scale);
+    map<int, float> buckets_m_abs = stat_utils::distribution(sampled_magnetization_abs, iters, scale);
 
-    auto square = [L](int x){return x * x;};
+    auto square = [](int x){return x * x;};
     float expected_epsilon = stat_utils::expected_value(buckets_epsilon);
     float expected_m_abs = stat_utils::expected_value(buckets_m_abs);
-    float expected_energy = stat_utils::expected_value(sampled_energy, N);
-    float expected_energy_sq = stat_utils::expected_value(sampled_energy, N, square);
-    float expected_magnetization_abs = stat_utils::expected_value(sampled_magnetization_abs, N);
-    float expected_magnetization_sq = stat_utils::expected_value(sampled_magnetization_abs, N, square);
+    float expected_energy = stat_utils::expected_value(sampled_energy, iters);
+    float expected_energy_sq = stat_utils::expected_value(sampled_energy, iters, square);
+    float expected_magnetization_abs = stat_utils::expected_value(sampled_magnetization_abs, iters);
+    float expected_magnetization_sq = stat_utils::expected_value(sampled_magnetization_abs, iters, square);
+    float c_v = (1. / N) * (1. / (T * T)) * (expected_energy_sq - expected_energy * expected_energy);
+    float chi = (1. / N) * (1. / T) * (expected_magnetization_sq - expected_magnetization_abs * expected_magnetization_abs);
 
     cout << "Sampled distribution of epsilon" << endl;
     stat_utils::print_map(buckets_epsilon);
@@ -78,8 +81,8 @@ void produce_distributions(const int N, const int L, double T, int burn_in_time 
     cout << "Other estimates: " << endl;
     cout << "<epsilon>: " <<  expected_epsilon << endl;
     cout << "<|m|>: " << expected_m_abs << endl;
-    cout << "C_v: " << (1. / N) * (1. / (T * T)) * (expected_energy_sq - expected_energy * expected_energy) << endl;
-    cout << "Chi: " << (1. / N) * (1. / T) * (expected_magnetization_sq - expected_magnetization_abs * expected_magnetization_abs) << endl;
+    cout << "C_v: " <<  c_v << endl;
+    cout << "Chi: " << chi << endl;
 }
 
 
@@ -87,7 +90,7 @@ void produce_distributions(const int N, const int L, double T, int burn_in_time 
 void test2x2(){
     const int N = 100000;
     int L = 2;
-    double T = 10;
+    double T = 1;
     produce_distributions(N, L, T);
 }
 
