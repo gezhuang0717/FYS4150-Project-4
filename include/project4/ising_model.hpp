@@ -21,8 +21,10 @@ class IsingModel{
         int get_energy();
         // Should only be called by constructor, but kept public as it might be useful
         // for debugging later.
-        void set_magnetisation();
-        int get_magnetisation();
+        void set_magnetization();
+        int get_magnetization();
+        float get_m();
+        float get_epsilon();
         void print();
     private:
         // Called by constructor to initialise 2D vector of spins.

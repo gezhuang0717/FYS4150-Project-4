@@ -12,7 +12,7 @@ IsingModel::IsingModel(int lattice_length, double T, bool random_spins){
     uniform = uniform_real_distribution<double>(0, 1);
     initialize_spins(L);
     set_energy();
-    set_magnetisation();
+    set_magnetization();
 }
 
 // Placeholder initialisations function.
@@ -39,17 +39,17 @@ void IsingModel::set_energy(){
     E = energy;
 }
 
-void IsingModel::set_magnetisation(){
-    int magnetisation = 0;
+void IsingModel::set_magnetization(){
+    int magnetization = 0;
     for (int i=0; i<L; i++){
         for (int j=0; j<L; j++){
-            magnetisation += spins[i][j];
+            magnetization += spins[i][j];
         }
     }
-    M = magnetisation;
+    M = magnetization;
 }
 
-int IsingModel::get_magnetisation(){
+int IsingModel::get_magnetization(){
     return M;
 }
 
@@ -57,9 +57,18 @@ int IsingModel::get_energy(){
     return E;
 }
 
+float IsingModel::get_epsilon(){
+    return (float)E / (L * L);
+}
+
+float IsingModel::get_m(){
+    return (float)M / (L * L);
+}
+
 vector<vector<int>> IsingModel::get_spins(){
     return spins;
 }
+
 
 void IsingModel::metropolis(){
     int ix, iy, delta_E;
@@ -82,7 +91,7 @@ void IsingModel::metropolis(){
             spins[ix][iy] *= -1;
             // Update energy
             E += delta_E;
-            // Update magnetisation
+            // Update magnetization
             M += 2 * spins[ix][iy];
         }
     }
