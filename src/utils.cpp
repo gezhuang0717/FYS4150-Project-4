@@ -2,7 +2,7 @@
 #include <map>
 #include "project4/stat_utils.hpp"
 
-int I(int x) {return x;}
+double I(int x) {return x;}
 
 void stat_utils::print_map(std::map<int, double> p){
     for (auto const& bucket : p){
@@ -11,7 +11,7 @@ void stat_utils::print_map(std::map<int, double> p){
 }
 
 
-double stat_utils::expected_value(std::map<int, double> p, std::function<int(int)> f){
+double stat_utils::expected_value(std::map<int, double> p, std::function<double(int)> f){
     double expected_value = 0.;
     for (auto const& bucket : p){
         expected_value += f(bucket.first) * bucket.second;
@@ -23,22 +23,22 @@ double stat_utils::expected_value(std::map<int, double> p){
     return expected_value(p, I);
 }
 
-double stat_utils::expected_value(int *samples, int N, std::function<int(int)> f){
-    int sum = 0;
+double stat_utils::expected_value(int *samples, int N, std::function<double(int)> f){
+    double sum = 0;
     for (int i = 0; i < N; i++){
         sum += f(samples[i]);
     }
-    return (double)sum / N;
+    return sum / N;
 }
 
 double stat_utils::expected_value(int *samples, int N){
     return expected_value(samples, N, I);
 }
 
-std::map<int, double> stat_utils::distribution(int *samples, int N, std::function<int(int)> f){
+std::map<int, double> stat_utils::distribution(int *samples, int N, std::function<double(int)> f){
     std::map<int, double> buckets;
     for (int i = 0; i < N; i++){
-        int sample = f(samples[i]);
+        float sample = f(samples[i]);
         buckets.emplace(sample, 0);
         buckets[sample] += 1./N;
     }
