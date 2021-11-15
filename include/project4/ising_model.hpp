@@ -23,8 +23,8 @@ class IsingModel{
         // for debugging later.
         void set_magnetization();
         int get_magnetization();
-        float get_m();
-        float get_epsilon();
+        double get_m();
+        double get_epsilon();
         void print();
     private:
         // Called by constructor to initialise 2D vector of spins.

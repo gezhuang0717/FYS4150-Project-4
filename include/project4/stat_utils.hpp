@@ -4,12 +4,12 @@
 #include <functional>
 
 namespace stat_utils{
-    void print_map(std::map<int, float> p);
-    float expected_value(std::map<int, float> p);
-    float expected_value(std::map<int, float> p, std::function<int(int)> f);
-    float expected_value(int* samples, int N);
-    float expected_value(int* samples, int N, std::function<int(int)> f);
-    std::map<int, float> distribution(int* samples, int N);
-    std::map<int, float> distribution(int* samples, int N, std::function<int(int)> f);
+    void print_map(std::map<int, double> p);
+    double expected_value(std::map<int, double> p);
+    double expected_value(std::map<int, double> p, std::function<int(int)> f);
+    double expected_value(int* samples, int N);
+    double expected_value(int* samples, int N, std::function<int(int)> f);
+    std::map<int, double> distribution(int* samples, int N);
+    std::map<int, double> distribution(int* samples, int N, std::function<int(int)> f);
 }
 
