@@ -3,7 +3,7 @@ import numpy as np
 
 
 class AnalyticalIsingModel:
-    def __init__(self, filename: str, temperature: float, L=2):
+    def __init__(self, filename: str, temperature: double, L=2):
         self._L = L
         self._N = L ** 2
         self._T = temperature
@@ -59,7 +59,7 @@ class AnalyticalIsingModel:
 
 
 class Superanalytical:
-    def __init__(self, filename: str, temperature: float, L=2):
+    def __init__(self, filename: str, temperature: double, L=2):
         self._L = L
         self._N = L ** 2
         self._T = temperature
