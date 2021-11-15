@@ -23,8 +23,8 @@ void find_burn_in_time(int N, int L=20, double T=1){
     vector<double> expected_E_burn_in;
     vector<double> expected_M_burn_in;
     for (int burn_in=0; burn_in<N; burn_in+=max(1, N/100)){
-        map<int, double> buckets_E = stat_utils::distribution(sampled_E + burn_in, N - burn_in);
-        map<int, double> buckets_M = stat_utils::distribution(sampled_M + burn_in, N - burn_in);
+        map<double, double> buckets_E = stat_utils::distribution(sampled_E + burn_in, N - burn_in);
+        map<double, double> buckets_M = stat_utils::distribution(sampled_M + burn_in, N - burn_in);
         expected_E_burn_in.push_back(stat_utils::expected_value(buckets_E));
         expected_M_burn_in.push_back(stat_utils::expected_value(buckets_M));
         burn_in_time.push_back(burn_in);
@@ -60,9 +60,9 @@ void produce_distributions(const int iters, const int L, double T, int burn_in_t
         sampled_energy[i] = model.get_energy();
         sampled_magnetization_abs[i] = abs(model.get_magnetization());
     }
-    auto scale = [N](int x){return x / N;};
-    map<int, double> buckets_epsilon = stat_utils::distribution(sampled_energy, iters, scale);
-    map<int, double> buckets_m_abs = stat_utils::distribution(sampled_magnetization_abs, iters, scale);
+    auto scale = [N](int x){return (float)x / N;};
+    map<double, double> buckets_epsilon = stat_utils::distribution(sampled_energy, iters, scale);
+    map<double, double> buckets_m_abs = stat_utils::distribution(sampled_magnetization_abs, iters, scale);
 
     auto square = [](int x){return x * x;};
     double expected_epsilon = stat_utils::expected_value(buckets_epsilon);
