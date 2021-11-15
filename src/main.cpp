@@ -86,7 +86,6 @@ void produce_distributions(const int iters, const int L, double T, int burn_in_t
 }
 
 
-
 void test2x2(){
     const int N = 100000;
     int L = 2;
@@ -97,5 +96,7 @@ void test2x2(){
 int main(){
     //find_burn_in_time(200, 20, 1.0);
     // produce_distributions(10000, 10, 10.);
-    test2x2();
+    produce_distributions(100000, 20, 1);
+    produce_distributions(100000, 20, 2.4);
+    //test2x2();
 }
