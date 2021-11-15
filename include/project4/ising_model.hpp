@@ -1,11 +1,9 @@
 #pragma once
 
+#include <map>
 #include <vector>
 #include <random>
 #include <iostream>
-
-// temporary because of exp-function
-#include <cmath>
 
 using namespace std;
 class IsingModel{
@@ -24,6 +22,7 @@ class IsingModel{
         void set_magnetization();
         int get_magnetization();
         double get_m();
+        double get_w(double delta_E);
         double get_epsilon();
         void print();
     private:
@@ -40,4 +39,6 @@ class IsingModel{
         int M;
         double beta;
         bool rand_spins;
+        void precompute_exp_factors();
+        map<int, double> exp_factors;
 };
