@@ -1,4 +1,7 @@
 #include "project4/ising_model.hpp"
+#include <cmath>
+#include <iostream>
+using namespace std; // TODO: rmeove this
 
 IsingModel::IsingModel(int lattice_length, double T, bool random_spins){
     L = lattice_length;
@@ -13,6 +16,7 @@ IsingModel::IsingModel(int lattice_length, double T, bool random_spins){
     initialize_spins(L);
     set_energy();
     set_magnetization();
+    precompute_exp_factors();
 }
 
 // Placeholder initialisations function.
@@ -69,6 +73,15 @@ vector<vector<int>> IsingModel::get_spins(){
     return spins;
 }
 
+void IsingModel::precompute_exp_factors(){
+    for (int i = -8; i <= 8; i += 4){ // values from -8 to 8, step 4
+        exp_factors[i] = exp(-beta * i);
+    }
+}
+
+double IsingModel::get_w(double delta_E){
+    return exp_factors[delta_E];
+}
 
 void IsingModel::metropolis(){
     int ix, iy, delta_E;
@@ -83,7 +96,8 @@ void IsingModel::metropolis(){
                                     + spins[(ix - 1 + L) % L][iy]);
         //compute exp(-beta*delta_E)
         // TODO: replace with pre-computed lookup
-        double w = exp(-beta * (double)delta_E);
+        // double w = exp(-beta * (double)delta_E);
+        double w = get_w(delta_E);
         double r = uniform(rng);
         // Check if spin should be flipped
         if (r <= w){
