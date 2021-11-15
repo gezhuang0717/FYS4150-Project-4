@@ -57,12 +57,12 @@ int IsingModel::get_energy(){
     return E;
 }
 
-float IsingModel::get_epsilon(){
-    return (float)E / (L * L);
+double IsingModel::get_epsilon(){
+    return (double)E / (L * L);
 }
 
-float IsingModel::get_m(){
-    return (float)M / (L * L);
+double IsingModel::get_m(){
+    return (double)M / (L * L);
 }
 
 vector<vector<int>> IsingModel::get_spins(){
