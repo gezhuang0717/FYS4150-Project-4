@@ -103,7 +103,7 @@ void write_values_to_file(int L, double T, ofstream &outfile){
 
 void test2x2(){
     const int N = 100000;
-    int L = 2;
+    int L = 4;
     double T = 1;
     produce_distributions(N, L, T);
 }
@@ -113,9 +113,11 @@ int main(){
     int steps = 10;
     double dT = (2.4 - T_min) / steps;
     ofstream outfile("output/values_L=40.csv");
-    #pragma omp parallel for
+    // #pragma omp parallel for
     for (int i = 0; i < steps; i++){
         double T = T_min + i * dT;
         write_values_to_file(20, T, outfile);
     }
+    outfile.close();
+    return 0;
 }

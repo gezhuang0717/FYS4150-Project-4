@@ -1,9 +1,9 @@
 #include "project4/ising_model.hpp"
 #include <cmath>
-#include <iostream>
-using namespace std; // TODO: rmeove this
+#include <iostream> // TODO: rmeove this
+using namespace std; // TODO: and this
 
-IsingModel::IsingModel(int lattice_length, double T, bool random_spins){
+IsingModel::IsingModel(int lattice_length, double T, bool random_spins){ // TODO: Add a seed
     L = lattice_length;
     beta = 1/T; 
     rand_spins = random_spins;
@@ -74,13 +74,15 @@ vector<vector<int>> IsingModel::get_spins(){
 }
 
 void IsingModel::precompute_exp_factors(){
-    for (int i = -8; i <= 8; i += 4){ // values from -8 to 8, step 4
-        exp_factors[i] = exp(-beta * i);
-    }
+    exp_factors[0] = exp(-beta * -8);
+    exp_factors[1] = exp(-beta * -4);
+    exp_factors[2] = exp(-beta * 0);
+    exp_factors[3] = exp(-beta * 4);
+    exp_factors[4] = exp(-beta * 8);
 }
 
-double IsingModel::get_w(double delta_E){
-    return exp_factors[delta_E];
+double IsingModel::get_w(int delta_E){
+    return exp_factors[(delta_E / 4 + 2)];
 }
 
 void IsingModel::metropolis(){
@@ -94,9 +96,6 @@ void IsingModel::metropolis(){
                                     + spins[ix][(iy - 1 + L) % L]
                                     + spins[(ix + 1) % L][iy]
                                     + spins[(ix - 1 + L) % L][iy]);
-        //compute exp(-beta*delta_E)
-        // TODO: replace with pre-computed lookup
-        // double w = exp(-beta * (double)delta_E);
         double w = get_w(delta_E);
         double r = uniform(rng);
         // Check if spin should be flipped

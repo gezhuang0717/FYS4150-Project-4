@@ -22,7 +22,7 @@ class IsingModel{
         void set_magnetization();
         int get_magnetization();
         double get_m();
-        double get_w(double delta_E);
+        double get_w(int delta_E);
         double get_epsilon();
         void print();
     private:
@@ -40,5 +40,5 @@ class IsingModel{
         double beta;
         bool rand_spins;
         void precompute_exp_factors();
-        map<int, double> exp_factors;
+        double exp_factors[5];
 };
