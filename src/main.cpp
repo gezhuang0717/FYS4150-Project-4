@@ -9,6 +9,7 @@
 #include <omp.h>
 #include <memory>
 #include <string>
+#include <chrono>
 
 using namespace std;
 
@@ -142,7 +143,42 @@ int test2x2(){
     return using_sample_size;
 }
 
+void timing_parallel_vs_serial(int L, double T) {
+    double T_min = 2.1;
+    int steps = 48;
+    chrono::duration<double> diff;
+
+    double dT = (2.4 - T_min) / steps;
+    auto start = chrono::high_resolution_clock::now();
+    ofstream outfile1("output/values_L=" + to_string(L) + ".csv");
+    for (int i = 0; i < steps; i++){
+        double T = T_min + i * dT;
+        write_values_to_file(L, T, outfile1);
+    }
+    outfile1.close();
+
+    auto end = chrono::high_resolution_clock::now();
+    diff = end - start;
+    cout << "Serial took " << diff.count() << " seconds" << endl;
+
+    start = chrono::high_resolution_clock::now();
+    ofstream outfile("output/values_L=" + to_string(L) + ".csv");
+    #pragma omp parallel for
+    for (int i = 0; i < steps; i++){
+        double T = T_min + i * dT;
+        write_values_to_file(L, T, outfile1);
+    }
+    outfile.close();
+    
+    end = chrono::high_resolution_clock::now();
+    diff = end - start;
+    cout << "Parallel took " << diff.count() << " seconds" << endl;
+}
+
 int main(){
+    timing_parallel_vs_serial(40, 2);
+    return 0;
+
     cout << "Testing for convergence against analytical results in the 2x2 case. Needed sample size: " << test2x2() << endl;
 
     double T_min = 2.1;
