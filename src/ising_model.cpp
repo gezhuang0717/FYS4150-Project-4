@@ -3,13 +3,11 @@
 #include <iostream> // TODO: rmeove this
 using namespace std; // TODO: and this
 
-IsingModel::IsingModel(int lattice_length, double T, bool random_spins){ // TODO: Add a seed
+IsingModel::IsingModel(int lattice_length, double T, bool random_spins, int seed){ // TODO: Add a seed
     L = lattice_length;
     beta = 1/T; 
     rand_spins = random_spins;
-    // int seed = 7773;
-    // rng = mt19937(seed);
-    rng = mt19937(69);
+    rng = mt19937(seed);
     rand_index = uniform_int_distribution<int>(0, L-1);
     rand_1_or_0 = uniform_int_distribution<int>(0, 1);
     uniform = uniform_real_distribution<double>(0, 1);

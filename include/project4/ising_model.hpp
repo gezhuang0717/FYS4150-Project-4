@@ -8,7 +8,7 @@
 using namespace std;
 class IsingModel{
     public:
-        IsingModel(int L, double T, bool random_spins);
+        IsingModel(int L, double T, bool random_spins, int seed);
         vector<vector<int>> get_spins();
         // Performs one Monte Carlo cycle of Metropolis algorithm and
         // Updates energy- and magnetization-values.
