@@ -147,7 +147,6 @@ int test2x2(){
 void timing_parallel_vs_serial(int L, double T) {
     double T_min = 2.1;
     int steps = 48;
-    chrono::duration<double> diff;
 
     double dT = (2.4 - T_min) / steps;
     auto start = chrono::high_resolution_clock::now();
@@ -159,8 +158,8 @@ void timing_parallel_vs_serial(int L, double T) {
     outfile1.close();
 
     auto end = chrono::high_resolution_clock::now();
-    diff = end - start;
-    cout << "Serial took " << diff.count() << " seconds" << endl;
+    chrono::duration<double> diff_serial = end - start;
+    cout << "Serial took " << diff_serial.count() << " seconds" << endl;
 
     start = chrono::high_resolution_clock::now();
     ofstream outfile2("output/values_L=" + to_string(L) + ".csv");
@@ -172,8 +171,11 @@ void timing_parallel_vs_serial(int L, double T) {
     outfile2.close();
     
     end = chrono::high_resolution_clock::now();
-    diff = end - start;
-    cout << "Parallel took " << diff.count() << " seconds" << endl;
+    chrono::duration<double> diff_parallel = end - start;
+    cout << "Parallel took " << diff_parallel.count() << " seconds" << endl;
+
+
+    cout << "Parallel is " << diff_serial.count() / diff_parallel.count() << " times faster" << endl;
 }
 
 int main(){
