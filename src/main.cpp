@@ -143,12 +143,13 @@ int test2x2(){
 }
 
 int main(){
-    cout << test2x2() << endl;
+    cout << "Samples for good convergence for 2x2: " << test2x2() << endl;
 
     double T_min = 2.1;
     int steps = 48;
 
     for (int L = 20; L <= 100; L += 20) {
+        cout << "Testing for " << L << "x" << L << endl;
         double dT = (2.4 - T_min) / steps;
         ofstream outfile("output/values_L=" + to_string(L) + ".csv");
         #pragma omp parallel for
