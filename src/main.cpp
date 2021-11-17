@@ -154,7 +154,7 @@ void timing_parallel_vs_serial(int L, double T) {
     ofstream outfile1("output/values_L=" + to_string(L) + ".csv");
     for (int i = 0; i < steps; i++){
         double T = T_min + i * dT;
-        write_values_to_file(L, T, outfile1);
+        write_values_to_file(L, T, 42, outfile1);
     }
     outfile1.close();
 
@@ -163,13 +163,13 @@ void timing_parallel_vs_serial(int L, double T) {
     cout << "Serial took " << diff.count() << " seconds" << endl;
 
     start = chrono::high_resolution_clock::now();
-    ofstream outfile("output/values_L=" + to_string(L) + ".csv");
+    ofstream outfile2("output/values_L=" + to_string(L) + ".csv");
     #pragma omp parallel for
     for (int i = 0; i < steps; i++){
         double T = T_min + i * dT;
-        write_values_to_file(L, T, outfile1);
+        write_values_to_file(L, T, 42, outfile2);
     }
-    outfile.close();
+    outfile2.close();
     
     end = chrono::high_resolution_clock::now();
     diff = end - start;
