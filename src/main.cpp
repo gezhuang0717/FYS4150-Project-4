@@ -143,7 +143,6 @@ int test2x2(){
 }
 
 int main(){
-<<<<<<< HEAD
     cout << test2x2() << endl;
 
     double T_min = 2.1;
