@@ -14,9 +14,13 @@ def plot_burn_in_time():
         df = pd.read_csv("output/" + filename)
         plt.plot(df.N, df.expected_E)
         plt.title("Calculated <E> for T=" + str(T) + " and " + orientation + " initial spins")
+        plt.xlabel("N")
+        plt.ylabel("<E>")
         plt.show()
         plt.plot(df.N, df.expected_M)
         plt.title("Calculated <|M|> for T=" + str(T) + " and " + orientation + " initial spins")
+        plt.xlabel("N")
+        plt.ylabel("<M>")
         plt.show()
 
 def plot_probability_distribution():
@@ -29,8 +33,8 @@ def plot_probability_distribution():
 
 
 def main():
-    #plot_burn_in_time()
-    plot_probability_distribution()
+    plot_burn_in_time()
+    # plot_probability_distribution()
 
 if __name__ == "__main__":
     main()

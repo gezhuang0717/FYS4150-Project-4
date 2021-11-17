@@ -158,9 +158,9 @@ int main(){
     // outfile.close();
     // write_distributions(10000, 20, 1, "output/distribution_epsilon_L=20_T=1.csv", "output/distribution_m_abs_L=20_T=1.csv");
     // write_distributions(10000, 20, 2.4, "output/distribution_epsilon_L=20_T=2.4.csv", "output/distribution_m_abs_L=20_T=2.4.csv");
-    find_burn_in_time(1000, 20, 1, false);
+    find_burn_in_time(2000, 20, 1, false);
     find_burn_in_time(1000, 20, 1, true);
-    find_burn_in_time(10000, 20, 2.4, false);
-    find_burn_in_time(10000, 20, 2.4, true);
+    find_burn_in_time(6000, 20, 2.4, false);
+    find_burn_in_time(6000, 20, 2.4, true);
     return 0;
 }
