@@ -148,8 +148,10 @@ void timing_parallel_vs_serial(int L, double T) {
     int repeats = 10;
 
     double T_min = 2.1;
+    double T_max = 2.1;
     int steps = 48;
-    double dT = (2.4 - T_min) / steps;
+    double dT = (T_max - T_min) / steps;
+    int seed = 42;
 
     double total_time_serial = 0;
     double total_time_parallel = 0;
@@ -157,13 +159,13 @@ void timing_parallel_vs_serial(int L, double T) {
     cout << "Running parallel: " << flush;
     for (int i = 0; i < repeats; i++) {
         auto start = chrono::high_resolution_clock::now();
-        ofstream outfile2("output/values_L=" + to_string(L) + ".csv");
+        ofstream outfile1("output/values_L=" + to_string(L) + ".csv");
         #pragma omp parallel for
         for (int i = 0; i < steps; i++){
             double T = T_min + i * dT;
-            write_values_to_file(L, T, 42, outfile2);
+            write_values_to_file(L, T, seed, outfile1);
         }
-        outfile2.close();
+        outfile1.close();
 
         auto end = chrono::high_resolution_clock::now();
         chrono::duration<double> diff_parallel = end - start;
@@ -171,26 +173,31 @@ void timing_parallel_vs_serial(int L, double T) {
         cout << "." << flush;
     }
 
-    cout << "\rAverage time for parallel: " << total_time_parallel / repeats << endl;
 
     cout << "Running serial: " << flush;
     for (int i = 0; i < repeats; i++) {
         auto start = chrono::high_resolution_clock::now();
-        ofstream outfile1("output/values_L=" + to_string(L) + ".csv");
+        ofstream outfile2("output/values_L=" + to_string(L) + ".csv");
         for (int i = 0; i < steps; i++){
             double T = T_min + i * dT;
-            write_values_to_file(L, T, 42, outfile1);
+            write_values_to_file(L, T, seed, outfile2);
         }
-        outfile1.close();
+        outfile2.close();
 
         auto end = chrono::high_resolution_clock::now();
         chrono::duration<double> diff_serial = end - start;
         total_time_serial += diff_serial.count();
         cout << "." << flush;
     }
-    cout << "\rAverage time for serial: " << total_time_serial / repeats << endl;
 
-    cout << "Parallel is " << total_time_serial / total_time_parallel << " times faster than serial" << endl;
+    ofstream timingfile("output/timing.txt");
+    timingfile << "Average timing for L=" << L << ", T=" << T << " and steps=" << steps << ", with " << repeats << " repeats" << endl;
+
+    timingfile << "Average time for parallel: " << total_time_parallel / repeats << endl;
+    timingfile << "Average time for serial: " << total_time_serial / repeats << endl;
+    timingfile << "Parallel is " << total_time_serial / total_time_parallel << " times faster than serial" << endl;
+
+    timingfile.close();
 }
 
 int main(){
