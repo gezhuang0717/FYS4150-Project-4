@@ -173,7 +173,7 @@ void timing_parallel_vs_serial(int L, double T) {
 
     cout << "\rAverage time for parallel: " << total_time_parallel / repeats << endl;
 
-    cout << "Running parallel: " << flush;
+    cout << "Running serial: " << flush;
     for (int i = 0; i < repeats; i++) {
         auto start = chrono::high_resolution_clock::now();
         ofstream outfile1("output/values_L=" + to_string(L) + ".csv");
