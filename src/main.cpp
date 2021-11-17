@@ -156,7 +156,6 @@ void timing_parallel_vs_serial(int L, double T) {
     double total_time_serial = 0;
     double total_time_parallel = 0;
 
-    cout << "Running parallel: " << flush;
     for (int i = 0; i < repeats; i++) {
         auto start = chrono::high_resolution_clock::now();
         ofstream outfile1("output/values_L=" + to_string(L) + ".csv");
@@ -170,11 +169,9 @@ void timing_parallel_vs_serial(int L, double T) {
         auto end = chrono::high_resolution_clock::now();
         chrono::duration<double> diff_parallel = end - start;
         total_time_parallel += diff_parallel.count();
-        cout << "." << flush;
     }
 
 
-    cout << "Running serial: " << flush;
     for (int i = 0; i < repeats; i++) {
         auto start = chrono::high_resolution_clock::now();
         ofstream outfile2("output/values_L=" + to_string(L) + ".csv");
@@ -187,7 +184,6 @@ void timing_parallel_vs_serial(int L, double T) {
         auto end = chrono::high_resolution_clock::now();
         chrono::duration<double> diff_serial = end - start;
         total_time_serial += diff_serial.count();
-        cout << "." << flush;
     }
 
     ofstream timingfile("output/timing.txt");
