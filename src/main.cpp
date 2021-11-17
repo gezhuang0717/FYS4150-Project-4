@@ -150,7 +150,7 @@ int main(){
 
     for (int L = 20; L <= 100; L += 20) {
         double dT = (2.4 - T_min) / steps;
-        ofstream outfile("output/values_L=" + L + ".csv");
+        ofstream outfile("output/values_L=" + to_string(L) + ".csv");
         #pragma omp parallel for
         for (int i = 0; i < steps; i++){
             double T = T_min + i * dT;
