@@ -8,19 +8,19 @@ def plot_burn_in_time():
                  "burn_in_T_2.400000_nonrandom.csv",
                  "burn_in_T_2.400000_random.csv"]
     temps = [1, 1, 2.4, 2.4]
-    spin_orientation = ["uniform", "random", "uniform", "random"]
+    spin_orientation = ["ordered", "unordered", "ordered", "unordered"]
     
     for filename, T, orientation in zip(filenames, temps, spin_orientation):
         df = pd.read_csv("output/" + filename)
         plt.plot(df.N, df.expected_E)
-        plt.title("Calculated <E> for T=" + str(T) + " and " + orientation + " initial spins")
+        plt.title("Calculated $<\epsilon>$ for T=" + str(T) + " and " + orientation + " initial spins")
         plt.xlabel("N")
-        plt.ylabel("<E>")
+        plt.ylabel("$<\epsilon>$")
         plt.show()
         plt.plot(df.N, df.expected_M)
-        plt.title("Calculated <|M|> for T=" + str(T) + " and " + orientation + " initial spins")
+        plt.title("Calculated <|m|> for T=" + str(T) + " and " + orientation + " initial spins")
         plt.xlabel("N")
-        plt.ylabel("<M>")
+        plt.ylabel("<|m|>")
         plt.show()
 
 def plot_probability_distribution():
