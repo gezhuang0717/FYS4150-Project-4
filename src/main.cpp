@@ -8,6 +8,7 @@
 #include <fstream>
 #include <omp.h>
 #include <memory>
+#include <string>
 
 using namespace std;
 
@@ -95,8 +96,17 @@ void find_burn_in_time(int N, int L=20, double T=1, bool random_spins=true){
         M_abs_avg.push_back(expected_m_abs);
         N_vector.push_back(i+1);
     }
+
     ofstream burn_in_csv;
-    burn_in_csv.open("output/burn_in.csv");
+    string spins_are_random;
+    if (random_spins){
+        spins_are_random = "random";
+    }
+    else{
+        spins_are_random = "nonrandom";
+    }
+    string filename = "output/burn_in_T_" + to_string(T) + "_" + spins_are_random + ".csv";
+    burn_in_csv.open(filename);
     burn_in_csv << "N,expected_E,expected_M\n";
 
     for (int i=0; i<N; i++){
@@ -149,10 +159,10 @@ int main(){
         outfile.close();
     }
 
-    write_distributions(10000, 20, 1, "output/distribution_epsilon_L=20_T=1.csv", "output/distribution_m_abs_L=20_T=1.csv");
-    write_distributions(10000, 20, 2.4, "output/distribution_epsilon_L=20_T=2.4.csv", "output/distribution_m_abs_L=20_T=2.4.csv");
-    find_burn_in_time(2000, 20, 1, false);
-    // const int L = 40;
+    find_burn_in_time(1000, 20, 1, false);
+    find_burn_in_time(1000, 20, 1, true);
+    find_burn_in_time(10000, 20, 2.4, false);
+    find_burn_in_time(10000, 20, 2.4, true);
 
     return 0;
 }
