@@ -144,31 +144,8 @@ int test2x2(){
 }
 
 int main(){
-<<<<<<< HEAD
-    // const int L = 40;
-
-    // cout << test2x2() << endl;
-    // double T_min = 2.1;
-    // int steps = 48;
-    // double dT = (2.4 - T_min) / steps;
-    // ofstream outfile("output/values_L=40.csv");
-    // #pragma omp parallel for
-    // for (int i = 0; i < steps; i++){
-    //     double T = T_min + i * dT;
-    //     write_values_to_file(L, T, outfile);
-    // }
-    // outfile.close();
-    // write_distributions(10000, 20, 1, "output/distribution_epsilon_L=20_T=1.csv", "output/distribution_m_abs_L=20_T=1.csv");
-    // write_distributions(10000, 20, 2.4, "output/distribution_epsilon_L=20_T=2.4.csv", "output/distribution_m_abs_L=20_T=2.4.csv");
-
-    int seed = 456788;
-    find_burn_in_time(2000, 20, 1, seed++, false);
-    find_burn_in_time(1000, 20, 1, seed++, true);
-    find_burn_in_time(6000, 20, 2.4, seed++, false);
-    find_burn_in_time(6000, 20, 2.4, seed++, true);
-=======
     cout << "Testing for convergence against analytical results in the 2x2 case. Needed sample size: " << test2x2() << endl;
-
+    int seed = 456788;
     double T_min = 2.1;
     int steps = 48;
 
@@ -179,16 +156,16 @@ int main(){
         #pragma omp parallel for
         for (int i = 0; i < steps; i++){
             double T = T_min + i * dT;
-            write_values_to_file(L, T, outfile);
+            write_values_to_file(L, T, seed++, outfile);
         }
         outfile.close();
     }
 
-    find_burn_in_time(1000, 20, 1, false);
-    find_burn_in_time(1000, 20, 1, true);
-    find_burn_in_time(10000, 20, 2.4, false);
-    find_burn_in_time(10000, 20, 2.4, true);
+    
+    find_burn_in_time(2000, 20, 1, seed++, false);
+    find_burn_in_time(1000, 20, 1, seed++, true);
+    find_burn_in_time(6000, 20, 2.4, seed++, false);
+    find_burn_in_time(6000, 20, 2.4, seed++, true);
 
->>>>>>> 55c02d8d77213c2e0e35acdc58f0dae8b42e8f65
     return 0;
 }
