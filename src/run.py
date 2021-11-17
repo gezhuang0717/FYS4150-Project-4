@@ -57,6 +57,12 @@ if __name__ == "__main__":
         action="store_true",
     )
     parser.add_argument(
+        "-p",
+        "--plot",
+        help="To generate plots",
+        action="store_true",
+    )
+    parser.add_argument(
         "-a",
         "--all",
         help="To run everything",
@@ -69,3 +75,7 @@ if __name__ == "__main__":
         parser.print_help()
     if args.states or args.all:
         get_all_states(2)
+    if args.plot or args.all:
+        import plot
+
+        plot.main()
