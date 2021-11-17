@@ -46,7 +46,7 @@ void write_distributions(const int iters, const int L, double T, string filename
     ofstream outfile_m_abs(filename_m_abs);
     outfile_epsilon << "|m|,p" << endl;
     stat_utils::write_distribution(buckets_m_abs, outfile_m_abs);
-    }
+}
 
 
 void values(vector<int> sampled_energy, vector<int> sampled_magnetization_abs, int sample_size, int L, double T, 
@@ -143,7 +143,7 @@ int test2x2(){
 }
 
 int main(){
-    cout << "Samples for good convergence for 2x2: " << test2x2() << endl;
+    cout << "Testing for convergence against analytical results in the 2x2 case. Needed sample size: " << test2x2() << endl;
 
     double T_min = 2.1;
     int steps = 48;
