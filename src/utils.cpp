@@ -8,7 +8,7 @@ double I(float x){return x;}
 
 void stat_utils::write_distribution(std::map<double, double> p, std::ofstream &outfile){
     for (auto const& bucket : p){
-        outfile << bucket.first << ": " << bucket.second << std::endl;
+        outfile << bucket.first << "," << bucket.second << std::endl;
     }
     outfile.close();
 }
