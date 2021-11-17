@@ -3,9 +3,10 @@
 #include <map>
 #include <functional>
 #include <vector>
+#include <fstream>
 
 namespace stat_utils{
-    void print_map(std::map<double, double> p);
+    void write_distribution(std::map<double, double> p, std::ofstream &outfile);
     double expected_value(std::map<double, double> p);
     double expected_value(std::map<double, double> p, std::function<double(double)> f);
     double expected_value(std::vector<int> samples, int N);

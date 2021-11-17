@@ -1,14 +1,16 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <fstream>
 #include "project4/stat_utils.hpp"
 
 double I(float x){return x;}
 
-void stat_utils::print_map(std::map<double, double> p){
+void stat_utils::write_distribution(std::map<double, double> p, std::ofstream &outfile){
     for (auto const& bucket : p){
-        std::cout << bucket.first << ": " << bucket.second << std::endl;
+        outfile << bucket.first << ": " << bucket.second << std::endl;
     }
+    outfile.close();
 }
 
 

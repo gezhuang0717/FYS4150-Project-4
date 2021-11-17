@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <fstream>
 #include <omp.h>
+#include <memory>
 
 using namespace std;
 
@@ -54,7 +55,6 @@ void sample(vector<int> &sampled_energy, vector<int> &sampled_magnetization_abs,
 }
 
 
-
 /**
  * @brief Produces sampled distribution of &epsilon; and |m|
  * 
@@ -63,7 +63,7 @@ void sample(vector<int> &sampled_energy, vector<int> &sampled_magnetization_abs,
  * @param T temperature
  * @param burn_in_time Number of iterations to discard when producing estimates 
  */
-void produce_distributions(const int iters, const int L, double T, int burn_in_time = 1000){ // note we don't have any indications on what the burn_in_time is yet
+void write_distributions(const int iters, const int L, double T, string filename_epsilon, string filename_m_abs, int burn_in_time = 1000){ // note we don't have any indications on what the burn_in_time is yet
     IsingModel model(L, T, true);
     const int N = L * L;
     vector<int> sampled_energy;
@@ -72,6 +72,12 @@ void produce_distributions(const int iters, const int L, double T, int burn_in_t
     auto scale = [N](int x){return (double)x / N;};
     map<double, double> buckets_epsilon = stat_utils::distribution(sampled_energy, iters, scale);
     map<double, double> buckets_m_abs = stat_utils::distribution(sampled_magnetization_abs, iters, scale);
+    ofstream outfile_epsilon(filename_epsilon);
+    outfile_epsilon << "epsilon,p" << endl;
+    stat_utils::write_distribution(buckets_epsilon, outfile_epsilon);
+    ofstream outfile_m_abs(filename_m_abs);
+    outfile_epsilon << "|m|,p" << endl;
+    stat_utils::write_distribution(buckets_m_abs, outfile_m_abs);
     }
 
 
@@ -108,6 +114,12 @@ void write_values_to_file(int L, double T, ofstream &outfile){
     outfile << T << "," << expected_epsilon << "," << expected_m_abs << "," << c_v << "," << chi << endl;
 }
 
+
+/**
+ * @brief Testing for convergence against analytical results in the 2x2 case
+ * 
+ * @return int number of samples needed for convergence
+ */
 int test2x2(){
     const double tol = 1e-2;
     vector<int> sampled_energy;
@@ -135,11 +147,13 @@ int main(){
     int steps = 10;
     double dT = (2.4 - T_min) / steps;
     ofstream outfile("output/values_L=40.csv");
-    // #pragma omp parallel for
+    #pragma omp parallel for
     for (int i = 0; i < steps; i++){
         double T = T_min + i * dT;
-        write_values_to_file(20, T, outfile);
+        write_values_to_file(40, T, outfile);
     }
     outfile.close();
+    write_distributions(10000, 20, 1, "output/distribution_epsilon_L=20_T=1.csv", "output/distribution_m_abs_L=20_T=1.csv");
+    write_distributions(10000, 20, 2.4, "output/distribution_epsilon_L=20_T=2.4.csv", "output/distribution_m_abs_L=20_T=2.4.csv");
     return 0;
 }
