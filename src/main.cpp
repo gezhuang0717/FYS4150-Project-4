@@ -11,41 +11,8 @@
 
 using namespace std;
 
-void find_burn_in_time(int N, int L=20, double T=1){
-    IsingModel model(L, T, true);
-    
-    vector<int> sampled_E;
-    vector<int> sampled_M;
-    for (int i=0; i<N; i++){
-        sampled_E[i] = model.get_energy();
-        sampled_M[i] = model.get_magnetization();
-        model.metropolis();
-    }
-    vector<int> burn_in_time;
-    vector<double> expected_E_burn_in;
-    vector<double> expected_M_burn_in;
-    for (int burn_in=0; burn_in<N; burn_in+=max(1, N/100)){
-        auto add_burn_in = [burn_in](int x){return x + burn_in;};
-        map<double, double> buckets_E = stat_utils::distribution(sampled_E, N - burn_in, add_burn_in);
-        map<double, double> buckets_M = stat_utils::distribution(sampled_M, N - burn_in, add_burn_in);
-        expected_E_burn_in.push_back(stat_utils::expected_value(buckets_E));
-        expected_M_burn_in.push_back(stat_utils::expected_value(buckets_M));
-        burn_in_time.push_back(burn_in);
-    }
-
-    ofstream burn_in_csv;
-    burn_in_csv.open("output/burn_in.csv");
-    burn_in_csv << "burn_in,expected_E,expected_M\n";
-    for (int i=0; i<burn_in_time.size(); i++){
-        burn_in_csv << burn_in_time[i] << "," << expected_E_burn_in[i] 
-                    << "," << expected_M_burn_in[i] << "\n";
-    }
-    burn_in_csv.close();
-}
-
-
-void sample(vector<int> &sampled_energy, vector<int> &sampled_magnetization_abs, const int iters, int L, double T, int burn_in_time = 1000){
-    IsingModel model(L, T, true);
+void sample(vector<int> &sampled_energy, vector<int> &sampled_magnetization_abs, const int iters, int L, double T, int burn_in_time = 1000, bool random_spins = true){
+    IsingModel model(L, T, random_spins);
     for (int i = -burn_in_time; i < iters; i++){
         model.metropolis();
         if (i < 0) continue;
@@ -114,6 +81,30 @@ void write_values_to_file(int L, double T, ofstream &outfile){
     outfile << T << "," << expected_epsilon << "," << expected_m_abs << "," << c_v << "," << chi << endl;
 }
 
+void find_burn_in_time(int N, int L=20, double T=1, bool random_spins=true){
+    vector<int> sampled_E;
+    vector<int> sampled_M_abs;
+    vector<double> E_avg;
+    vector<double> M_abs_avg;
+    vector<int> N_vector;
+    sample(sampled_E, sampled_M_abs, N, L, T, 0, random_spins);
+    for (int i=0; i<N; i++){
+        double expected_eps, expected_m_abs, c_v, chi;
+        values(sampled_E, sampled_M_abs, i+1, L, T, expected_eps, expected_m_abs, c_v, chi);
+        E_avg.push_back(expected_eps);
+        M_abs_avg.push_back(expected_m_abs);
+        N_vector.push_back(i+1);
+    }
+    ofstream burn_in_csv;
+    burn_in_csv.open("output/burn_in.csv");
+    burn_in_csv << "N,expected_E,expected_M\n";
+
+    for (int i=0; i<N; i++){
+        burn_in_csv << N_vector[i] << "," << E_avg[i] 
+                    << "," << M_abs_avg[i] << "\n";
+    }
+    burn_in_csv.close();
+}
 
 /**
  * @brief Testing for convergence against analytical results in the 2x2 case
@@ -142,18 +133,19 @@ int test2x2(){
 }
 
 int main(){
-    cout << test2x2() << endl;
-    double T_min = 2.1;
-    int steps = 10;
-    double dT = (2.4 - T_min) / steps;
-    ofstream outfile("output/values_L=40.csv");
-    #pragma omp parallel for
-    for (int i = 0; i < steps; i++){
-        double T = T_min + i * dT;
-        write_values_to_file(40, T, outfile);
-    }
-    outfile.close();
-    write_distributions(10000, 20, 1, "output/distribution_epsilon_L=20_T=1.csv", "output/distribution_m_abs_L=20_T=1.csv");
-    write_distributions(10000, 20, 2.4, "output/distribution_epsilon_L=20_T=2.4.csv", "output/distribution_m_abs_L=20_T=2.4.csv");
+    // cout << test2x2() << endl;
+    // double T_min = 2.1;
+    // int steps = 10;
+    // double dT = (2.4 - T_min) / steps;
+    // ofstream outfile("output/values_L=40.csv");
+    // #pragma omp parallel for
+    // for (int i = 0; i < steps; i++){
+    //     double T = T_min + i * dT;
+    //     write_values_to_file(40, T, outfile);
+    // }
+    // outfile.close();
+    // write_distributions(10000, 20, 1, "output/distribution_epsilon_L=20_T=1.csv", "output/distribution_m_abs_L=20_T=1.csv");
+    // write_distributions(10000, 20, 2.4, "output/distribution_epsilon_L=20_T=2.4.csv", "output/distribution_m_abs_L=20_T=2.4.csv");
+    find_burn_in_time(2000, 20, 1, false);
     return 0;
 }
