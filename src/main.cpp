@@ -196,10 +196,14 @@ void timing_parallel_vs_serial(int L, double T) {
     timingfile.close();
 }
 
+string to_string(double a, int precision){
+    return to_string(a).substr(0, to_string(a).find(".") + precision + 1);
+}
+
 void look_between_temperatures(double T_min, double T_max, int L, int steps, int &seed){
     cout << "Testing for " << L << "x" << L << endl;
     double dT = (T_max - T_min) / steps;
-    ofstream outfile("output/values_[" + to_string(T_min) + "," + to_string(T_max) + "]_L=" + to_string(L) + ".csv");
+    ofstream outfile("output/values_T=[" + to_string(T_min, 1) + "," + to_string(T_max, 1) + "]_L=" + to_string(L) + ".csv");
     outfile << "T,<epsilon>,<|m|>,C_v,chi" << endl;
     #pragma omp parallel for
     for (int i = 0; i < steps; i++){
