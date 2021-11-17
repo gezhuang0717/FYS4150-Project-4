@@ -19,8 +19,18 @@ def plot_burn_in_time():
         plt.title("Calculated <|M|> for T=" + str(T) + " and " + orientation + " initial spins")
         plt.show()
 
+def plot_probability_distribution():
+    df = pd.read_csv("output/distribution_epsilon_L=20_T=1.csv")
+    print(df.epsilon)
+    print(df.p)
+    df.plot.hist(bins=5)
+    #plt.hist(df.p, df.epsilon)
+    plt.show()
+
+
 def main():
-    plot_burn_in_time()
+    #plot_burn_in_time()
+    plot_probability_distribution()
 
 if __name__ == "__main__":
     main()

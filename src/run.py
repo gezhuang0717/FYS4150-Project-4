@@ -10,7 +10,6 @@ def get_all_states(L):
     spins = itertools.product([-1, 1], repeat=N)
 
     state_summary = []
-    degeneracies = defaultdict(int)
 
     for spin in spins:
         spin = np.array(spin).reshape(L, L)
@@ -23,17 +22,23 @@ def get_all_states(L):
 
         M_s = np.sum(spin)
 
-        degeneracies[E_s] += 1
-
         state_summary.append([positive_spins, E_s, M_s])
 
+    # extract the unique states and number of degeneracies
+    unique_states = np.unique(state_summary, axis=0)
+    degeneracies = defaultdict(int)
     for state in state_summary:
-        state.append(degeneracies[state[1]])
+        degeneracies[str(state)] += 1
+
+    # combine degeneracies and unique states
+    states = []
+    for state in unique_states:
+        states.append([*state, degeneracies[str(list(state))]])
 
     # write state summary to csv file with header
     np.savetxt(
         "output/state_summary.csv",
-        state_summary,
+        sorted(states, reverse=True),
         delimiter=",",
         fmt="%s",
         header="positive spins,E(s),M(s),degeneracy",
