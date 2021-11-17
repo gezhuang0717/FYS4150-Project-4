@@ -3,7 +3,7 @@ import numpy as np
 
 
 class AnalyticalIsingModel:
-    def __init__(self, filename: str, temperature: double, L=2):
+    def __init__(self, filename: str, temperature: float, L=2):
         self._L = L
         self._N = L ** 2
         self._T = temperature
@@ -59,7 +59,7 @@ class AnalyticalIsingModel:
 
 
 class Superanalytical:
-    def __init__(self, filename: str, temperature: double, L=2):
+    def __init__(self, filename: str, temperature: float, L=2):
         self._L = L
         self._N = L ** 2
         self._T = temperature
@@ -84,20 +84,11 @@ class Superanalytical:
 
 if __name__ == "__main__":
 
-    with open("output/expected_epsilon_analytical_L=2.csv", "w") as epsilon_file, \
-    open("output/expected_m_abs_analytical_L=2.csv", "w") as m_file, \
-    open("output/C_v_analytical_L=2.csv", "w") as C_v_file, \
-    open("output/chi_analytical_L=2.csv", "w") as chi_file:
-        epsilon_file.write("T,<epsilon>\n")
-        m_file.write("T,<|m|>\n")
-        C_v_file.write("T,C_v\n")
-        chi_file.write("T, chi\n")
+    with open("output/analytical_L=2.csv", "w") as outfile:
+        outfile.write("T,<epsilon>,<|m|>,C_v,chi\n")
         for T in np.arange(1, 2.5, .1):
             aim = AnalyticalIsingModel("output/state_summary.csv", temperature=T)
-            epsilon_file.write(f"{T},{aim.expected_epsilon}\n")
-            m_file.write(f"{T},{aim.expected_abs_m}\n")
-            C_v_file.write(f"{T},{aim.C_v}\n")
-            chi_file.write(f"{T},{aim.chi}\n")
+            outfile.write(f"{T},{aim.expected_epsilon},{aim.expected_abs_m},{aim.C_v},{aim.chi}\n")
 
 
 

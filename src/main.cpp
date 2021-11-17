@@ -75,6 +75,22 @@ void produce_distributions(const int iters, const int L, double T, int burn_in_t
     }
 
 
+void values(vector<int> sampled_energy, vector<int> sampled_magnetization_abs, int sample_size, int L, double T, 
+double &expected_epsilon, double &expected_m_abs, double &c_v, double &chi){
+    int N = L * L;
+    auto scale = [N](int x){return (double)x / N;};
+    auto square = [](int x){return x * x;};
+    expected_epsilon = stat_utils::expected_value(sampled_energy, sample_size, scale);
+    expected_m_abs = stat_utils::expected_value(sampled_magnetization_abs, sample_size, scale);
+    double expected_energy = stat_utils::expected_value(sampled_energy, sample_size);
+    double expected_energy_sq = stat_utils::expected_value(sampled_energy, sample_size, square);
+    double expected_magnetization_abs = stat_utils::expected_value(sampled_magnetization_abs, sample_size);
+    double expected_magnetization_sq = stat_utils::expected_value(sampled_magnetization_abs, sample_size, square);
+    c_v = (1. / N) * (1. / (T * T)) * (expected_energy_sq - expected_energy * expected_energy);
+    chi = (1. / N) * (1. / T) * (expected_magnetization_sq - expected_magnetization_abs * expected_magnetization_abs);
+}
+
+
 
 /**
  * @brief estimates <&epsilon;>, <|m|>, C_v and &chiand writes them to the outfile in that order, all after the temperature
@@ -87,29 +103,35 @@ void write_values_to_file(int L, double T, ofstream &outfile){
     vector<int> sampled_energy;
     vector<int> sampled_magnetization_abs;
     sample(sampled_energy, sampled_magnetization_abs, sample_size, L, T, 1000);
-    int N = L * L;
-    auto scale = [N](int x){return (double)x / N;};
-    auto square = [](int x){return x * x;};
-    double expected_epsilon = stat_utils::expected_value(sampled_energy, sample_size, scale);
-    double expected_m_abs = stat_utils::expected_value(sampled_magnetization_abs, sample_size, scale);
-    double expected_energy = stat_utils::expected_value(sampled_energy, sample_size);
-    double expected_energy_sq = stat_utils::expected_value(sampled_energy, sample_size, square);
-    double expected_magnetization_abs = stat_utils::expected_value(sampled_magnetization_abs, sample_size);
-    double expected_magnetization_sq = stat_utils::expected_value(sampled_magnetization_abs, sample_size, square);
-    double c_v = (1. / N) * (1. / (T * T)) * (expected_energy_sq - expected_energy * expected_energy);
-    double chi = (1. / N) * (1. / T) * (expected_magnetization_sq - expected_magnetization_abs * expected_magnetization_abs);
+    double expected_epsilon, expected_m_abs, c_v, chi;
+    values(sampled_energy, sampled_magnetization_abs, sample_size, L, T, expected_epsilon, expected_m_abs, c_v, chi);
     outfile << T << "," << expected_epsilon << "," << expected_m_abs << "," << c_v << "," << chi << endl;
 }
 
-void test2x2(){
-    const int N = 100000;
-    int L = 4;
-    double T = 1;
-    produce_distributions(N, L, T);
+int test2x2(){
+    const double tol = 1e-2;
+    vector<int> sampled_energy;
+    vector<int> sampled_magnetization_abs;
+    double T = 1.;
+    int max_sample_size = 10000;
+    sample(sampled_energy, sampled_magnetization_abs, max_sample_size, 2, T, 0);
+    double expected_epsilon, expected_m_abs, c_v, chi;
+    double analytical_expected_epsilon = -1.99598208593669, analytical_expected_m_abs = 0.9986607327485997, analytical_c_v = 0.032082331864287994, analytical_chi = 0.004010739516227435;
+    int using_sample_size = 1;
+    do {
+        values(sampled_energy, sampled_magnetization_abs, using_sample_size, 2, T, expected_epsilon, expected_m_abs, c_v, chi);
+        using_sample_size++;
+    } while((abs(expected_epsilon - analytical_expected_epsilon) > tol 
+            or abs(expected_m_abs - analytical_expected_m_abs) > tol 
+            or abs(c_v - analytical_c_v) > tol 
+            or abs(chi - analytical_chi) > tol)
+            and using_sample_size < max_sample_size);
+    return using_sample_size;
 }
 
 int main(){
-    double T_min = 1;
+    cout << test2x2() << endl;
+    double T_min = 2.1;
     int steps = 10;
     double dT = (2.4 - T_min) / steps;
     ofstream outfile("output/values_L=40.csv");
