@@ -142,15 +142,17 @@ int test2x2(){
 }
 
 int main(){
+    const int L = 40;
+
     cout << test2x2() << endl;
     double T_min = 2.1;
-    int steps = 10;
+    int steps = 48;
     double dT = (2.4 - T_min) / steps;
     ofstream outfile("output/values_L=40.csv");
     #pragma omp parallel for
     for (int i = 0; i < steps; i++){
         double T = T_min + i * dT;
-        write_values_to_file(40, T, outfile);
+        write_values_to_file(L, T, outfile);
     }
     outfile.close();
     write_distributions(10000, 20, 1, "output/distribution_epsilon_L=20_T=1.csv", "output/distribution_m_abs_L=20_T=1.csv");
