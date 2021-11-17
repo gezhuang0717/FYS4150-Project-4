@@ -216,11 +216,11 @@ int main(){
         #pragma omp parallel for
         for (int i = 0; i < steps; i++){
             double T = T_min + i * dT;
-            write_values_to_file(L, T, seed++, outfile);
+            write_values_to_file(L, T, seed+i, outfile);
         }
         outfile.close();
     }
-
+    seed = 982653;
     
     find_burn_in_time(2000, 20, 1, seed++, false);
     find_burn_in_time(1000, 20, 1, seed++, true);
