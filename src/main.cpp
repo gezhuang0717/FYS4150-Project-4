@@ -46,7 +46,7 @@ void write_distributions(const int iters, const int L, double T, int seed, strin
     ofstream outfile_m_abs(filename_m_abs);
     outfile_epsilon << "|m|,p" << endl;
     stat_utils::write_distribution(buckets_m_abs, outfile_m_abs);
-    }
+}
 
 
 void values(vector<int> sampled_energy, vector<int> sampled_magnetization_abs, int sample_size, int L, double T, 
@@ -144,6 +144,7 @@ int test2x2(){
 }
 
 int main(){
+<<<<<<< HEAD
     // const int L = 40;
 
     // cout << test2x2() << endl;
@@ -165,5 +166,29 @@ int main(){
     find_burn_in_time(1000, 20, 1, seed++, true);
     find_burn_in_time(6000, 20, 2.4, seed++, false);
     find_burn_in_time(6000, 20, 2.4, seed++, true);
+=======
+    cout << "Testing for convergence against analytical results in the 2x2 case. Needed sample size: " << test2x2() << endl;
+
+    double T_min = 2.1;
+    int steps = 48;
+
+    for (int L = 20; L <= 100; L += 20) {
+        cout << "Testing for " << L << "x" << L << endl;
+        double dT = (2.4 - T_min) / steps;
+        ofstream outfile("output/values_L=" + to_string(L) + ".csv");
+        #pragma omp parallel for
+        for (int i = 0; i < steps; i++){
+            double T = T_min + i * dT;
+            write_values_to_file(L, T, outfile);
+        }
+        outfile.close();
+    }
+
+    find_burn_in_time(1000, 20, 1, false);
+    find_burn_in_time(1000, 20, 1, true);
+    find_burn_in_time(10000, 20, 2.4, false);
+    find_burn_in_time(10000, 20, 2.4, true);
+
+>>>>>>> 55c02d8d77213c2e0e35acdc58f0dae8b42e8f65
     return 0;
 }
