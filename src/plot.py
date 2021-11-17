@@ -27,14 +27,22 @@ def plot_probability_distribution():
     df = pd.read_csv("output/distribution_epsilon_L=20_T=1.csv")
     print(df.epsilon)
     print(df.p)
-    df.plot.hist(bins=5)
-    #plt.hist(df.p, df.epsilon)
+    plt.bar(df.epsilon, df.p)
     plt.show()
 
 
+def plot_values():
+    for L in range(20, 120, 20):
+        print(L)
+        df = pd.read_csv(f"output/values_L={L}.csv")
+        df.sort_values("T", inplace=True)
+        df.plot(x="T", y="C_v", title=f"L={L}")
+        plt.show()
+
 def main():
-    plot_burn_in_time()
-    # plot_probability_distribution()
+    #plot_burn_in_time()
+    #plot_probability_distribution()
+    plot_values()
 
 if __name__ == "__main__":
     main()

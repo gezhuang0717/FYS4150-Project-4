@@ -193,32 +193,40 @@ void timing_parallel_vs_serial(int L, double T) {
     cout << "Parallel is " << total_time_serial / total_time_parallel << " times faster than serial" << endl;
 }
 
-int main(){
-    timing_parallel_vs_serial(40, 2);
-    return 0;
+void look_between_temperatures(double T_min, double T_max, int L, int steps, int &seed){
+    cout << "Testing for " << L << "x" << L << endl;
+    double dT = (T_max - T_min) / steps;
+    ofstream outfile("output/values_[" + to_string(T_min) + "," + to_string(T_max) + "]_L=" + to_string(L) + ".csv");
+    outfile << "T,<epsilon>,<|m|>,C_v,chi" << endl;
+    #pragma omp parallel for
+    for (int i = 0; i < steps; i++){
+        double T = T_min + i * dT;
+        write_values_to_file(L, T, seed++, outfile);
+    }
+    outfile.close();
+}
 
-    cout << "Testing for convergence against analytical results in the 2x2 case. Needed sample size: " << test2x2() << endl;
+int main(){
+    //timing_parallel_vs_serial(40, 2);
+    //return 0;
+//
+    //cout << "Testing for convergence against analytical results in the 2x2 case. Needed sample size: " << test2x2() << endl;
     int seed = 456788;
     double T_min = 2.1;
+    double T_max = 2.4;
     int steps = 48;
 
     for (int L = 20; L <= 100; L += 20) {
-        cout << "Testing for " << L << "x" << L << endl;
-        double dT = (2.4 - T_min) / steps;
-        ofstream outfile("output/values_L=" + to_string(L) + ".csv");
-        #pragma omp parallel for
-        for (int i = 0; i < steps; i++){
-            double T = T_min + i * dT;
-            write_values_to_file(L, T, seed++, outfile);
-        }
-        outfile.close();
+        look_between_temperatures(T_min, T_max, L, 48, seed);
     }
-
     
+
     find_burn_in_time(2000, 20, 1, seed++, false);
     find_burn_in_time(1000, 20, 1, seed++, true);
     find_burn_in_time(6000, 20, 2.4, seed++, false);
     find_burn_in_time(6000, 20, 2.4, seed++, true);
+    write_distributions(10000, 20, 1, seed++, "output/distribution_epsilon_L=20_T=1.csv", "output/distribution_m_abs_L=20_T=1.csv");
+    write_distributions(10000, 20, 2.4, seed++, "output/distribution_epsilon_L=20_T=2.4.csv", "output/distribution_m_abs_L=20_T=2.4.csv");
 
     return 0;
 }
