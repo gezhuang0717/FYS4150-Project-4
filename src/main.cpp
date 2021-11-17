@@ -220,22 +220,8 @@ int main(){
     int steps = 48;
 
     for (int L = 20; L <= 100; L += 20) {
-<<<<<<< HEAD
         look_between_temperatures(T_min, T_max, L, 48, seed);
     }
-=======
-        cout << "Testing for " << L << "x" << L << endl;
-        double dT = (2.4 - T_min) / steps;
-        ofstream outfile("output/values_L=" + to_string(L) + ".csv");
-        #pragma omp parallel for
-        for (int i = 0; i < steps; i++){
-            double T = T_min + i * dT;
-            write_values_to_file(L, T, seed+i, outfile);
-        }
-        outfile.close();
-    }
-    seed = 982653;
->>>>>>> cd80dc8ed2b19fdf49ebcb10ca30a9dd000e2f5e
     
 
     find_burn_in_time(2000, 20, 1, seed++, false);
