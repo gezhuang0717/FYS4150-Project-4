@@ -145,37 +145,52 @@ int test2x2(){
 }
 
 void timing_parallel_vs_serial(int L, double T) {
+    int repeats = 10;
+
     double T_min = 2.1;
     int steps = 48;
-
     double dT = (2.4 - T_min) / steps;
-    auto start = chrono::high_resolution_clock::now();
-    ofstream outfile1("output/values_L=" + to_string(L) + ".csv");
-    for (int i = 0; i < steps; i++){
-        double T = T_min + i * dT;
-        write_values_to_file(L, T, 42, outfile1);
+
+    double total_time_serial = 0;
+    double total_time_parallel = 0;
+
+    cout << "Running parallel: " << flush;
+    for (int i = 0; i < repeats; i++) {
+        auto start = chrono::high_resolution_clock::now();
+        ofstream outfile2("output/values_L=" + to_string(L) + ".csv");
+        #pragma omp parallel for
+        for (int i = 0; i < steps; i++){
+            double T = T_min + i * dT;
+            write_values_to_file(L, T, 42, outfile2);
+        }
+        outfile2.close();
+
+        auto end = chrono::high_resolution_clock::now();
+        chrono::duration<double> diff_parallel = end - start;
+        total_time_parallel += diff_parallel.count();
+        cout << "." << flush;
     }
-    outfile1.close();
 
-    auto end = chrono::high_resolution_clock::now();
-    chrono::duration<double> diff_serial = end - start;
-    cout << "Serial took " << diff_serial.count() << " seconds" << endl;
+    cout << "\rAverage time for parallel: " << total_time_parallel / repeats << endl;
 
-    start = chrono::high_resolution_clock::now();
-    ofstream outfile2("output/values_L=" + to_string(L) + ".csv");
-    #pragma omp parallel for
-    for (int i = 0; i < steps; i++){
-        double T = T_min + i * dT;
-        write_values_to_file(L, T, 42, outfile2);
+    cout << "Running parallel: " << flush;
+    for (int i = 0; i < repeats; i++) {
+        auto start = chrono::high_resolution_clock::now();
+        ofstream outfile1("output/values_L=" + to_string(L) + ".csv");
+        for (int i = 0; i < steps; i++){
+            double T = T_min + i * dT;
+            write_values_to_file(L, T, 42, outfile1);
+        }
+        outfile1.close();
+
+        auto end = chrono::high_resolution_clock::now();
+        chrono::duration<double> diff_serial = end - start;
+        total_time_serial += diff_serial.count();
+        cout << "." << flush;
     }
-    outfile2.close();
-    
-    end = chrono::high_resolution_clock::now();
-    chrono::duration<double> diff_parallel = end - start;
-    cout << "Parallel took " << diff_parallel.count() << " seconds" << endl;
+    cout << "\rAverage time for serial: " << total_time_serial / repeats << endl;
 
-
-    cout << "Parallel is " << diff_serial.count() / diff_parallel.count() << " times faster" << endl;
+    cout << "Parallel is " << total_time_serial / total_time_parallel << " times faster than serial" << endl;
 }
 
 int main(){
