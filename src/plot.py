@@ -1,27 +1,47 @@
+import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import scipy.stats as sts
+
+sns.set_theme()
+
+
 def plot_burn_in_time():
-    filenames = ["burn_in_T_1.000000_nonrandom.csv",
-                 "burn_in_T_1.000000_random.csv",
-                 "burn_in_T_2.400000_nonrandom.csv",
-                 "burn_in_T_2.400000_random.csv"]
+    filenames = [
+        "burn_in_T_1.000000_nonrandom.csv",
+        "burn_in_T_1.000000_random.csv",
+        "burn_in_T_2.400000_nonrandom.csv",
+        "burn_in_T_2.400000_random.csv",
+    ]
     temps = [1, 1, 2.4, 2.4]
     spin_orientation = ["ordered", "unordered", "ordered", "unordered"]
-    
+
     for filename, T, orientation in zip(filenames, temps, spin_orientation):
         df = pd.read_csv("output/" + filename)
         plt.plot(df.N, df.expected_E)
-        plt.title("Calculated $<\epsilon>$ for T=" + str(T) + " and " + orientation + " initial spins")
+        plt.title(
+            "Calculated $<\epsilon>$ for T="
+            + str(T)
+            + " and "
+            + orientation
+            + " initial spins"
+        )
         plt.xlabel("N")
         plt.ylabel("$<\epsilon>$")
         plt.show()
         plt.plot(df.N, df.expected_M)
-        plt.title("Calculated <|m|> for T=" + str(T) + " and " + orientation + " initial spins")
+        plt.title(
+            "Calculated <|m|> for T="
+            + str(T)
+            + " and "
+            + orientation
+            + " initial spins"
+        )
         plt.xlabel("N")
         plt.ylabel("<|m|>")
         plt.show()
+
 
 def plot_probability_distribution():
     df = pd.read_csv("output/distribution_epsilon_L=20_T=1.csv")
@@ -38,10 +58,21 @@ def plot_values_and_print_max():
         df.sort_values("T", inplace=True, ignore_index=True)
         df.plot(x="T", y="C_v", title=f"L={L}")
         argmax_C_v = df.C_v.idxmax()
+<<<<<<< HEAD
         argmax_chi = df.chi.idxmax()
         print(f"L = {L} - argmax C_v: {df.loc[argmax_C_v]['T']}, argmax chi {df.loc[argmax_C_v]['T']}")
         print(f"Look between temperatures {df.loc[min(argmax_C_v, argmax_chi) - 1]['T']} and {df.loc[max(argmax_C_v, argmax_chi) + 1]['T']}")
+=======
+        armmax_chi = df.chi.idxmax()
+        print(
+            f"L = {L} - argmax C_v: {df.loc[argmax_C_v]['T']}, argmax chi {df.loc[argmax_C_v]['T']}"
+        )
+        print(
+            f"Look between temperatures {df.loc[min(argmax_C_v, armmax_chi) - 1]['T']} and {df.loc[max(argmax_C_v, armmax_chi) + 1]['T']}"
+        )
+>>>>>>> afbc2e447dc0f9de8cf3adde4f0d01661d9cd8fc
         plt.show()
+
 
 def estimate_T_inf():
     y = []
@@ -49,18 +80,29 @@ def estimate_T_inf():
     for L in range(20, 120, 20):
         df = pd.read_csv(f"output/values_zoom_L={L}.csv")
         argmax_C_v = df.C_v.idxmax()
+<<<<<<< HEAD
         argmax_chi = df.chi.idxmax()
         y.append((df.loc[argmax_C_v]['T'] + df.loc[argmax_chi]['T']) / 2)
+=======
+        armmax_chi = df.chi.idxmax()
+        y.append((df.loc[argmax_C_v]["T"] + df.loc[argmax_C_v]["T"]) / 2)
+>>>>>>> afbc2e447dc0f9de8cf3adde4f0d01661d9cd8fc
         x.append(1 / L)
     print(sts.linregress(x, y).intercept)
-    
 
 
 def main():
+<<<<<<< HEAD
     #plot_burn_in_time()
     #plot_probability_distribution()
     plot_values_and_print_max()
+=======
+    #  plot_burn_in_time()
+    # plot_probability_distribution()
+    # plot_values_and_print_max()
+>>>>>>> afbc2e447dc0f9de8cf3adde4f0d01661d9cd8fc
     estimate_T_inf()
+
 
 if __name__ == "__main__":
     main()
