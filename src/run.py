@@ -2,6 +2,7 @@ import argparse
 import itertools
 import numpy as np
 from collections import defaultdict
+import plot
 
 
 def get_all_states(L):
@@ -76,6 +77,4 @@ if __name__ == "__main__":
     if args.states or args.all:
         get_all_states(2)
     if args.plot or args.all:
-        import plot
-
         plot.main()
