@@ -74,10 +74,10 @@ double &expected_epsilon, double &expected_m_abs, double &c_v, double &chi){
  * @param outfile csv-file to write results
  */
 void write_values_to_file(int L, double T, int seed, ofstream &outfile){
-    int sample_size = 10000;
+    int sample_size = 100000;
     vector<int> sampled_energy;
     vector<int> sampled_magnetization_abs;
-    sample(sampled_energy, sampled_magnetization_abs, sample_size, L, T, seed, 1000);
+    sample(sampled_energy, sampled_magnetization_abs, sample_size, L, T, seed, 10000);
     double expected_epsilon, expected_m_abs, c_v, chi;
     values(sampled_energy, sampled_magnetization_abs, sample_size, L, T, expected_epsilon, expected_m_abs, c_v, chi);
     outfile << T << "," << expected_epsilon << "," << expected_m_abs << "," << c_v << "," << chi << endl;
@@ -229,9 +229,8 @@ int main(int argc, char *argv[]){
 
         for (int L = 20; L <= 100; L += 20) {
             look_between_temperatures(T_min, T_max, L, steps, seed);
-        
+        }
         return 0;
-    }
     }
     if (argc < 4){
         cout << "Please include L,  T_min and T_max" << endl;
