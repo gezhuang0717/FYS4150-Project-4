@@ -74,7 +74,7 @@ double &expected_epsilon, double &expected_m_abs, double &c_v, double &chi){
  * @param outfile csv-file to write results
  */
 void write_values_to_file(int L, double T, int seed, ofstream &outfile){
-    int sample_size = 1000000;
+    int sample_size = 100000;
     vector<int> sampled_energy;
     vector<int> sampled_magnetization_abs;
     sample(sampled_energy, sampled_magnetization_abs, sample_size, L, T, seed, 10000);
@@ -125,14 +125,14 @@ void find_burn_in_time(int N, int L, double T, int seed, bool random_spins=true)
  */
 int test2x2(){
     int seed = 3875623;
-    const double tol = 1e-2;
+    const double tol = 1e-3;
     vector<int> sampled_energy;
     vector<int> sampled_magnetization_abs;
-    double T = 1.;
-    int max_sample_size = 100000;
+    double T = 2.;
+    int max_sample_size = 10000;
     sample(sampled_energy, sampled_magnetization_abs, max_sample_size, 2, T, seed, 0);
     double expected_epsilon, expected_m_abs, c_v, chi;
-    double analytical_expected_epsilon = -1.99598208593669, analytical_expected_m_abs = 0.9986607327485997, analytical_c_v = 0.032082331864287994, analytical_chi = 0.004010739516227435;
+    double analytical_expected_epsilon = -1.8008253628497959, analytical_expected_m_abs = 0.9337091730054017, analytical_c_v = 0.3610959875477656, analytical_chi = 0.09079837108784634;
     int using_sample_size = 1;
     do {
         values(sampled_energy, sampled_magnetization_abs, using_sample_size, 2, T, expected_epsilon, expected_m_abs, c_v, chi);
@@ -217,18 +217,19 @@ void look_between_temperatures(double T_min, double T_max, int L, int steps, int
 
 
 int main(int argc, char *argv[]){
-    timing_parallel_vs_serial(40, 2);
-    return 0;
-     
+    //timing_parallel_vs_serial(40, 2);
+    //return 0;
+//  
+    cout << "Testing for convergence against analytical results in the 2x2 case. Needed sample size: " << test2x2() << endl;
+    
     int seed = 456788;
     int steps = 24;
-
 
     if (argc == 1){
         double T_min = 2.1;
         double T_max = 2.4;
 
-        for (int L = 20; L <= 100; L += 20) {
+        for (int L = 20; L <= 200; L += 20) {
             look_between_temperatures(T_min, T_max, L, steps, seed);
         }
         return 0;
@@ -242,7 +243,6 @@ int main(int argc, char *argv[]){
     double T_min = atof(argv[2]);
     double T_max = atof(argv[3]);
 
-    cout << "Testing for convergence against analytical results in the 2x2 case. Needed sample size: " << test2x2() << endl;
 
     // look_between_temperatures(T_min, T_max, L, steps, seed);
     

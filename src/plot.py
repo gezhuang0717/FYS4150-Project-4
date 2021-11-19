@@ -96,17 +96,24 @@ def estimate_T_inf():
     for L in range(20, 120, 20):
         df = pd.read_csv(f"output/values_zoom_L={L}.csv")
         argmax_C_v = df.C_v.idxmax()
-        armmax_chi = df.chi.idxmax()
-        y.append((df.loc[argmax_C_v]["T"] + df.loc[argmax_C_v]["T"]) / 2)
+        argmax_chi = df.chi.idxmax()
+        y.append((df.loc[argmax_C_v]['T'] + df.loc[argmax_chi]['T']) / 2)
         x.append(1 / L)
     print(sts.linregress(x, y).intercept)
 
 
 def main():
+<<<<<<< HEAD
     plot_burn_in_time(40)
     # plot_probability_distribution()
     # plot_values_and_print_max()
     # estimate_T_inf()
+=======
+    #plot_burn_in_time()
+    #plot_probability_distribution()
+    plot_values_and_print_max()
+    estimate_T_inf()
+>>>>>>> 9a031d8c9559f5cbd1b998e4406de2e7cd03a1d9
 
 
 if __name__ == "__main__":

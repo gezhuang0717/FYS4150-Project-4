@@ -3,6 +3,7 @@ import itertools
 import numpy as np
 from collections import defaultdict
 import plot
+import analytical_ising_model
 
 
 def get_all_states(L):
@@ -64,6 +65,12 @@ if __name__ == "__main__":
         action="store_true",
     )
     parser.add_argument(
+        "-an",
+        "--analytical",
+        help="To generate analytical values",
+        action="store_true",
+    )
+    parser.add_argument(
         "-a",
         "--all",
         help="To run everything",
@@ -78,3 +85,5 @@ if __name__ == "__main__":
         get_all_states(2)
     if args.plot or args.all:
         plot.main()
+    if args.analytical or args.all:
+        analytical_ising_model.main()
