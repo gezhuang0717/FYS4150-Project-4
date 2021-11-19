@@ -31,18 +31,22 @@ def plot_probability_distribution():
     plt.show()
 
 
-def plot_values():
+def plot_values_and_print_max():
     for L in range(20, 120, 20):
         print(L)
-        df = pd.read_csv(f"output/values_L={L}.csv")
-        df.sort_values("T", inplace=True)
-        df.plot(x="T", y="chi", title=f"L={L}")
+        df = pd.read_csv(f"output/values_zoom_L={L}.csv")
+        df.sort_values("T", inplace=True, ignore_index=True)
+        df.plot(x="T", y="C_v", title=f"L={L}")
+        argmax_C_v = df.C_v.idxmax()
+        armmax_chi = df.chi.idxmax()
+        print(f"L = {L} - argmax C_v: {df.loc[argmax_C_v]['T']}, argmax chi {df.loc[argmax_C_v]['T']}")
+        print(f"Look between temperatures {df.loc[min(argmax_C_v, armmax_chi) - 1]['T']} and {df.loc[max(argmax_C_v, armmax_chi) + 1]['T']}")
         plt.show()
 
 def main():
-    plot_burn_in_time()
+    #plot_burn_in_time()
     #plot_probability_distribution()
-    #plot_values()
+    plot_values_and_print_max()
 
 if __name__ == "__main__":
     main()

@@ -74,7 +74,7 @@ double &expected_epsilon, double &expected_m_abs, double &c_v, double &chi){
  * @param outfile csv-file to write results
  */
 void write_values_to_file(int L, double T, int seed, ofstream &outfile){
-    int sample_size = 100000;
+    int sample_size = 1000000;
     vector<int> sampled_energy;
     vector<int> sampled_magnetization_abs;
     sample(sampled_energy, sampled_magnetization_abs, sample_size, L, T, seed, 10000);
