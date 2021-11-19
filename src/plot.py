@@ -58,11 +58,6 @@ def plot_values_and_print_max():
         df.sort_values("T", inplace=True, ignore_index=True)
         df.plot(x="T", y="C_v", title=f"L={L}")
         argmax_C_v = df.C_v.idxmax()
-<<<<<<< HEAD
-        argmax_chi = df.chi.idxmax()
-        print(f"L = {L} - argmax C_v: {df.loc[argmax_C_v]['T']}, argmax chi {df.loc[argmax_C_v]['T']}")
-        print(f"Look between temperatures {df.loc[min(argmax_C_v, argmax_chi) - 1]['T']} and {df.loc[max(argmax_C_v, argmax_chi) + 1]['T']}")
-=======
         armmax_chi = df.chi.idxmax()
         print(
             f"L = {L} - argmax C_v: {df.loc[argmax_C_v]['T']}, argmax chi {df.loc[argmax_C_v]['T']}"
@@ -70,7 +65,6 @@ def plot_values_and_print_max():
         print(
             f"Look between temperatures {df.loc[min(argmax_C_v, armmax_chi) - 1]['T']} and {df.loc[max(argmax_C_v, armmax_chi) + 1]['T']}"
         )
->>>>>>> afbc2e447dc0f9de8cf3adde4f0d01661d9cd8fc
         plt.show()
 
 
@@ -80,27 +74,16 @@ def estimate_T_inf():
     for L in range(20, 120, 20):
         df = pd.read_csv(f"output/values_zoom_L={L}.csv")
         argmax_C_v = df.C_v.idxmax()
-<<<<<<< HEAD
         argmax_chi = df.chi.idxmax()
         y.append((df.loc[argmax_C_v]['T'] + df.loc[argmax_chi]['T']) / 2)
-=======
-        armmax_chi = df.chi.idxmax()
-        y.append((df.loc[argmax_C_v]["T"] + df.loc[argmax_C_v]["T"]) / 2)
->>>>>>> afbc2e447dc0f9de8cf3adde4f0d01661d9cd8fc
         x.append(1 / L)
     print(sts.linregress(x, y).intercept)
 
 
 def main():
-<<<<<<< HEAD
     #plot_burn_in_time()
     #plot_probability_distribution()
     plot_values_and_print_max()
-=======
-    #  plot_burn_in_time()
-    # plot_probability_distribution()
-    # plot_values_and_print_max()
->>>>>>> afbc2e447dc0f9de8cf3adde4f0d01661d9cd8fc
     estimate_T_inf()
 
 
