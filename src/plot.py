@@ -7,12 +7,12 @@ import scipy.stats as sts
 sns.set_theme()
 
 
-def plot_burn_in_time():
+def plot_burn_in_time(L=20):
     filenames = [
-        "burn_in_T_1.000000_nonrandom.csv",
-        "burn_in_T_1.000000_random.csv",
-        "burn_in_T_2.400000_nonrandom.csv",
-        "burn_in_T_2.400000_random.csv",
+        "burn_in_L_" + str(L) + "_T_1.000000_nonrandom.csv",
+        "burn_in_L_" + str(L) + "_T_1.000000_random.csv",
+        "burn_in_L_" + str(L) + "_T_2.400000_nonrandom.csv",
+        "burn_in_L_" + str(L) + "_T_2.400000_random.csv",
     ]
     temps = [1, 1, 2.4, 2.4]
     spin_orientation = ["ordered", "unordered", "ordered", "unordered"]
@@ -23,24 +23,46 @@ def plot_burn_in_time():
         plt.title(
             "Calculated $<\epsilon>$ for T="
             + str(T)
-            + " and "
+            + ", L="
+            + str(L)
+            + ", and "
             + orientation
             + " initial spins"
         )
         plt.xlabel("N")
         plt.ylabel("$<\epsilon>$")
-        plt.show()
+        plt.savefig(
+            "plots/burn_in/expected_E" 
+            + str(L) 
+            + "_T_ " 
+            + str(T) 
+            + "_" 
+            + orientation 
+            + ".pdf")
+        # plt.show()
+        plt.cla()
         plt.plot(df.N, df.expected_M)
         plt.title(
             "Calculated <|m|> for T="
             + str(T)
-            + " and "
+            + ", L="
+            + str(L)
+            + ", and "
             + orientation
             + " initial spins"
         )
         plt.xlabel("N")
         plt.ylabel("<|m|>")
-        plt.show()
+        plt.savefig(
+            "plots/burn_in/expected_m_abs" 
+            + str(L) 
+            + "_T_ " 
+            + str(T) 
+            + "_" 
+            + orientation 
+            + ".pdf")
+        # plt.show()
+        plt.cla()
 
 
 def plot_probability_distribution():
@@ -81,10 +103,10 @@ def estimate_T_inf():
 
 
 def main():
-    #  plot_burn_in_time()
+    plot_burn_in_time(40)
     # plot_probability_distribution()
     # plot_values_and_print_max()
-    estimate_T_inf()
+    # estimate_T_inf()
 
 
 if __name__ == "__main__":

@@ -106,7 +106,8 @@ void find_burn_in_time(int N, int L, double T, int seed, bool random_spins=true)
     else{
         spins_are_random = "nonrandom";
     }
-    string filename = "output/burn_in_T_" + to_string(T) + "_" + spins_are_random + ".csv";
+    string filename = "output/burn_in_L_" + to_string(L) + "_T_" 
+                    + to_string(T) + "_" + spins_are_random + ".csv";
     burn_in_csv.open(filename);
     burn_in_csv << "N,expected_E,expected_M\n";
 
@@ -216,9 +217,9 @@ void look_between_temperatures(double T_min, double T_max, int L, int steps, int
 
 
 int main(int argc, char *argv[]){
-    //timing_parallel_vs_serial(40, 2);
-    //return 0;
-//      
+    timing_parallel_vs_serial(40, 2);
+    return 0;
+     
     int seed = 456788;
     int steps = 24;
 
@@ -243,13 +244,14 @@ int main(int argc, char *argv[]){
 
     cout << "Testing for convergence against analytical results in the 2x2 case. Needed sample size: " << test2x2() << endl;
 
-    look_between_temperatures(T_min, T_max, L, steps, seed);
+    // look_between_temperatures(T_min, T_max, L, steps, seed);
     
-
-    //find_burn_in_time(2000, 20, 1, seed++, false);
-    //find_burn_in_time(1000, 20, 1, seed++, true);
-    //find_burn_in_time(6000, 20, 2.4, seed++, false);
-    //find_burn_in_time(6000, 20, 2.4, seed++, true);
+    // for (int L: {20, 40, 60, 80, 100}){
+    //     find_burn_in_time(30000, L, 1, seed++, false);
+    //     find_burn_in_time(30000, L, 1, seed++, true);
+    //     find_burn_in_time(30000, L, 2.4, seed++, false);
+    //     find_burn_in_time(30000, L, 2.4, seed++, true);
+    // }
     //write_distributions(10000, 20, 1, seed++, "output/distribution_epsilon_L=20_T=1.csv", "output/distribution_m_abs_L=20_T=1.csv");
     //write_distributions(10000, 20, 2.4, seed++, "output/distribution_epsilon_L=20_T=2.4.csv", "output/distribution_m_abs_L=20_T=2.4.csv");
 
