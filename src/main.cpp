@@ -128,7 +128,7 @@ int test2x2(){
     vector<int> sampled_energy;
     vector<int> sampled_magnetization_abs;
     double T = 1.;
-    int max_sample_size = 10000;
+    int max_sample_size = 100000;
     sample(sampled_energy, sampled_magnetization_abs, max_sample_size, 2, T, seed, 0);
     double expected_epsilon, expected_m_abs, c_v, chi;
     double analytical_expected_epsilon = -1.99598208593669, analytical_expected_m_abs = 0.9986607327485997, analytical_c_v = 0.032082331864287994, analytical_chi = 0.004010739516227435;
@@ -213,27 +213,46 @@ void look_between_temperatures(double T_min, double T_max, int L, int steps, int
     outfile.close();
 }
 
-int main(){
+
+
+int main(int argc, char *argv[]){
     //timing_parallel_vs_serial(40, 2);
     //return 0;
-//
-    //cout << "Testing for convergence against analytical results in the 2x2 case. Needed sample size: " << test2x2() << endl;
+//      
     int seed = 456788;
-    double T_min = 2.1;
-    double T_max = 2.4;
-    int steps = 48;
+    int steps = 24;
 
-    for (int L = 20; L <= 100; L += 20) {
-        look_between_temperatures(T_min, T_max, L, 48, seed);
+
+    if (argc == 1){
+        double T_min = 2.1;
+        double T_max = 2.4;
+
+        for (int L = 20; L <= 100; L += 20) {
+            look_between_temperatures(T_min, T_max, L, steps, seed);
+        
+        return 0;
     }
+    }
+    if (argc < 4){
+        cout << "Please include L,  T_min and T_max" << endl;
+        return 1;
+    }
+
+    int L = atoi(argv[1]);
+    double T_min = atof(argv[2]);
+    double T_max = atof(argv[3]);
+
+    cout << "Testing for convergence against analytical results in the 2x2 case. Needed sample size: " << test2x2() << endl;
+
+    look_between_temperatures(T_min, T_max, L, steps, seed);
     
 
-    find_burn_in_time(2000, 20, 1, seed++, false);
-    find_burn_in_time(1000, 20, 1, seed++, true);
-    find_burn_in_time(6000, 20, 2.4, seed++, false);
-    find_burn_in_time(6000, 20, 2.4, seed++, true);
-    write_distributions(10000, 20, 1, seed++, "output/distribution_epsilon_L=20_T=1.csv", "output/distribution_m_abs_L=20_T=1.csv");
-    write_distributions(10000, 20, 2.4, seed++, "output/distribution_epsilon_L=20_T=2.4.csv", "output/distribution_m_abs_L=20_T=2.4.csv");
+    //find_burn_in_time(2000, 20, 1, seed++, false);
+    //find_burn_in_time(1000, 20, 1, seed++, true);
+    //find_burn_in_time(6000, 20, 2.4, seed++, false);
+    //find_burn_in_time(6000, 20, 2.4, seed++, true);
+    //write_distributions(10000, 20, 1, seed++, "output/distribution_epsilon_L=20_T=1.csv", "output/distribution_m_abs_L=20_T=1.csv");
+    //write_distributions(10000, 20, 2.4, seed++, "output/distribution_epsilon_L=20_T=2.4.csv", "output/distribution_m_abs_L=20_T=2.4.csv");
 
     return 0;
 }

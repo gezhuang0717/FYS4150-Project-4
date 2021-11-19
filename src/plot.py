@@ -36,13 +36,13 @@ def plot_values():
         print(L)
         df = pd.read_csv(f"output/values_L={L}.csv")
         df.sort_values("T", inplace=True)
-        df.plot(x="T", y="C_v", title=f"L={L}")
+        df.plot(x="T", y="chi", title=f"L={L}")
         plt.show()
 
 def main():
-    #plot_burn_in_time()
+    plot_burn_in_time()
     #plot_probability_distribution()
-    plot_values()
+    #plot_values()
 
 if __name__ == "__main__":
     main()
