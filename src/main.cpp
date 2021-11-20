@@ -13,6 +13,23 @@
 
 using namespace std;
 
+bool has_flag(const std::string& option, char** begin, char** end){
+    return std::find(begin, end, option) != end;
+}
+
+void print_help_message() {
+    cout << "Usage" << endl;
+    cout << "\t./runner [flags]" << endl;
+    cout << endl;
+    cout << "Options:" << endl;
+    cout << "\t-h\tShow this help message" << endl;
+    cout << "\t-t\tTest implementation" << endl;
+    cout << "\t-b\tFinds burn in time" << endl;
+    cout << "\t-d\tFinds distribution" << endl;
+    cout << "\t-s\tFinds values for L in 20, 40, 60, 80, 100, 120, 140, 160 for T in the range [2.1, 2.4]" << endl;
+    cout << "\t-z\tZooms in and finds values. Provide L, T_min, T_max and seed as system argunments" << endl;
+}
+
 void sample(vector<int> &sampled_energy, vector<int> &sampled_magnetization_abs, const int iters, int L, double T, int seed, int burn_in_time = 1000, bool random_spins = true){
     IsingModel model(L, T, random_spins, seed);
     for (int i = -burn_in_time; i < iters; i++){
@@ -123,8 +140,7 @@ void find_burn_in_time(int N, int L, double T, int seed, bool random_spins=true)
  * 
  * @return int number of samples needed for convergence
  */
-int test2x2(){
-    int seed = 3875623;
+int test2x2(int seed){
     const double tol = 1e-3;
     vector<int> sampled_energy;
     vector<int> sampled_magnetization_abs;
@@ -201,10 +217,10 @@ string to_string(double a, int precision){
     return to_string(a).substr(0, to_string(a).find(".") + precision + 1);
 }
 
-void look_between_temperatures(double T_min, double T_max, int L, int steps, int &seed){
+void look_between_temperatures(double T_min, double T_max, int L, int steps, int &seed, string filename){
     cout << "Testing for " << L << "x" << L << endl;
     double dT = (T_max - T_min) / steps;
-    ofstream outfile("output/values_T=[" + to_string(T_min, 1) + "," + to_string(T_max, 1) + "]_L=" + to_string(L) + ".csv");
+    ofstream outfile(filename);
     outfile << "T,<epsilon>,<|m|>,C_v,chi" << endl;
     #pragma omp parallel for
     for (int i = 0; i < steps; i++){
@@ -217,44 +233,51 @@ void look_between_temperatures(double T_min, double T_max, int L, int steps, int
 
 
 int main(int argc, char *argv[]){
-    //timing_parallel_vs_serial(40, 2);
-    //return 0;
-//  
-    cout << "Testing for convergence against analytical results in the 2x2 case. Needed sample size: " << test2x2() << endl;
-    
-    int seed = 456788;
-    int steps = 24;
-
-    if (argc == 1){
-        double T_min = 2.1;
-        double T_max = 2.4;
-
-        for (int L = 20; L <= 160; L += 20) {
-            look_between_temperatures(T_min, T_max, L, steps, seed);
+    if (has_flag("-h", argv, argv + argc)) print_help_message();
+    else if (has_flag("-t", argv, argv + argc)) {
+        int seed = 3875623;
+        cout << "Testing for convergence against analytical results in the 2x2 case. Needed sample size: " << test2x2(seed) << endl;
         }
-        return 0;
+    else if (has_flag("-b", argv, argv + argc)) { 
+        int seed =  23344;   
+        for (int L: {20, 40, 60, 80, 100}){
+            find_burn_in_time(30000, L, 1, seed++, false);
+            find_burn_in_time(30000, L, 1, seed++, true);
+            find_burn_in_time(30000, L, 2.4, seed++, false);
+            find_burn_in_time(30000, L, 2.4, seed++, true);
+        }
+    }
+    else if (has_flag("-d", argv, argv + argc)){
+        int seed = 33419;
+        write_distributions(10000, 20, 1, seed++, "output/distribution_epsilon_L=20_T=1.csv", "output/distribution_m_abs_L=20_T=1.csv");
+        write_distributions(10000, 20, 2.4, seed++, "output/distribution_epsilon_L=20_T=2.4.csv", "output/distribution_m_abs_L=20_T=2.4.csv");
     }
     
-    if (argc < 5){
-        cout << "Please include L, T_min, T_max and seed" << endl;
-        return 1;
+    else if (has_flag("-s", argv, argv + argc)){
+        int seed = 456788;
+        int steps = 24;
+
+        if (argc == 1){
+            double T_min = 2.1;
+            double T_max = 2.4;
+
+            for (int L = 20; L <= 160; L += 20) {
+                look_between_temperatures(T_min, T_max, L, steps, seed, "output/values_L=" + to_string(L) + ".csv");
+            }
+        }
     }
-
-    int L = atoi(argv[1]);
-    double T_min = atof(argv[2]);
-    double T_max = atof(argv[3]);
-    seed = atoi(argv[4]);
-
-    look_between_temperatures(T_min, T_max, L, steps, seed);
-    
-    // for (int L: {20, 40, 60, 80, 100}){
-    //     find_burn_in_time(30000, L, 1, seed++, false);
-    //     find_burn_in_time(30000, L, 1, seed++, true);
-    //     find_burn_in_time(30000, L, 2.4, seed++, false);
-    //     find_burn_in_time(30000, L, 2.4, seed++, true);
-    // }
-    //write_distributions(10000, 20, 1, seed++, "output/distribution_epsilon_L=20_T=1.csv", "output/distribution_m_abs_L=20_T=1.csv");
-    //write_distributions(10000, 20, 2.4, seed++, "output/distribution_epsilon_L=20_T=2.4.csv", "output/distribution_m_abs_L=20_T=2.4.csv");
+    else if (has_flag("-z", argv, argv + argc)){
+        int steps = 24;
+        if (argc < 5){
+             cout << "Please include L, T_min, T_max and seed" << endl;
+            return 1;
+        }
+        int L = atoi(argv[1]);
+        double T_min = atof(argv[2]);
+        double T_max = atof(argv[3]);
+        int seed = atoi(argv[4]);
+        look_between_temperatures(T_min, T_max, L, steps, seed, "output/values_zoom_L=" + to_string(L) + ".csv");
+    }
 
     return 0;
 }

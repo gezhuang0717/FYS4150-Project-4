@@ -4,7 +4,7 @@ import numpy as np
 from collections import defaultdict
 import plot
 import analytical_ising_model
-
+import zoom
 
 def get_all_states(L):
     N = L ** 2
@@ -71,6 +71,12 @@ if __name__ == "__main__":
         action="store_true",
     )
     parser.add_argument(
+        "-z",
+        "--zoom",
+        help="Find maximum values and zoom",
+        action="store_true",
+    )
+    parser.add_argument(
         "-a",
         "--all",
         help="To run everything",
@@ -87,3 +93,5 @@ if __name__ == "__main__":
         plot.main()
     if args.analytical or args.all:
         analytical_ising_model.main()
+    if args.zoom or args.all:
+        zoom.main()
