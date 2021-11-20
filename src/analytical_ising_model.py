@@ -89,6 +89,10 @@ class Superanalytical:
     def expected_abs_M(self):
         return (2 * np.exp(8 * self._beta) + 4) / (np.cosh(8 * self._beta) + 3)
 
+    @property
+    def expected_epsilon_squared(self):
+        return 4 * np.cosh(8 * self._beta) / (np.cosh(8 * self._beta) + 3)
+
 
 def main():
     with open("output/analytical_L=2.csv", "w") as outfile:
@@ -102,12 +106,14 @@ def main():
     aim = AnalyticalIsingModel("output/state_summary.csv", temperature=1)
     sup = Superanalytical("output/state_summary.csv", temperature=1)
     print("")
-    print(aim.Z)
-    print(sup.Z)
-    print(aim.expected_epsilon)
-    print(aim.expected_abs_m)
-    print(aim.C_v)
-    print(aim.chi)
+    print(aim.expected_epsilon_squared)
+    print(sup.expected_epsilon_squared)
+    #  print(aim.Z)
+    #  print(sup.Z)
+    #  print(aim.expected_epsilon)
+    #  print(aim.expected_abs_m)
+    #  print(aim.C_v)
+    #  print(aim.chi)
     #  print(aim.expected_E)
     #  print(aim.expected_epsilon)
     #  print(aim.expected_epsilon_squared)
