@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import scipy.stats as sts
+import subprocess
 
 sns.set_theme()
 
@@ -73,21 +74,33 @@ def plot_probability_distribution():
     plt.show()
 
 
-def plot_values_and_print_max():
-    for L in range(20, 220, 20):
+def plot_values():
+    for L in range(20, 180, 20):
         print(L)
         df = pd.read_csv(f"output/values_T=[2.1,2.4]_L={L}.csv")
         df.sort_values("T", inplace=True, ignore_index=True)
         df.plot(x="T", y="C_v", title=f"L={L}")
+        plt.show()
+
+def zoom():
+    seed = 9642
+    for L in range(20, 180, 20):
+        print(L)
+        df = pd.read_csv(f"output/values_T=[2.1,2.4]_L={L}.csv")
+        df.sort_values("T", inplace=True, ignore_index=True)
+        margin = 2
         argmax_C_v = df.C_v.idxmax()
         armmax_chi = df.chi.idxmax()
-        #print(
-        #    f"L = {L} - argmax C_v: {df.loc[argmax_C_v]['T']}, argmax chi {df.loc[argmax_C_v]['T']}"
-        #)
-        #print(
-        #    f"Look between temperatures {df.loc[min(argmax_C_v, armmax_chi) - 1]['T']} and {df.loc[max(argmax_C_v, armmax_chi) + 1]['T']}"
-        #)
-        plt.show()
+        T_min = df.loc[max(0, min(argmax_C_v, armmax_chi) - margin)]['T']
+        T_max = df.loc[min(max(argmax_C_v, armmax_chi) + margin, len(df["T"]) - 1)]['T']
+        print(
+            f"L = {L} - argmax C_v: {df.loc[argmax_C_v]['T']}, argmax chi {df.loc[argmax_C_v]['T']}"
+        )
+        print(
+            f"Look between temperatures {T_min} and {T_max}"
+        )
+        subprocess.run(['./runner', str(L), str(T_min), str(T_max), str(seed)])
+        seed += 1
 
 
 def estimate_T_inf():
@@ -116,7 +129,8 @@ def main():
     #plot_burn_in_time()
     #plot_probability_distribution()
     #plot_values_and_print_max()
-    estimate_T_inf()
+    #estimate_T_inf()
+    zoom()
 
 
 if __name__ == "__main__":
