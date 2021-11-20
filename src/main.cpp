@@ -91,10 +91,10 @@ double &expected_epsilon, double &expected_m_abs, double &c_v, double &chi){
  * @param outfile csv-file to write results
  */
 void write_values_to_file(int L, double T, int seed, ofstream &outfile){
-    int sample_size = 100000;
+    int sample_size = 1000000;
     vector<int> sampled_energy;
     vector<int> sampled_magnetization_abs;
-    sample(sampled_energy, sampled_magnetization_abs, sample_size, L, T, seed, 10000);
+    sample(sampled_energy, sampled_magnetization_abs, sample_size, L, T, seed, 30000);
     double expected_epsilon, expected_m_abs, c_v, chi;
     values(sampled_energy, sampled_magnetization_abs, sample_size, L, T, expected_epsilon, expected_m_abs, c_v, chi);
     outfile << T << "," << expected_epsilon << "," << expected_m_abs << "," << c_v << "," << chi << endl;
@@ -278,6 +278,5 @@ int main(int argc, char *argv[]){
         int seed = atoi(argv[4]);
         look_between_temperatures(T_min, T_max, L, steps, seed, "output/values_zoom_L=" + to_string(L) + ".csv");
     }
-
     return 0;
 }
