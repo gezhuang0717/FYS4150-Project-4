@@ -3,7 +3,7 @@
 #include <iostream> // TODO: rmeove this
 using namespace std; // TODO: and this
 
-IsingModel::IsingModel(int lattice_length, double T, bool random_spins, int seed){ // TODO: Add a seed
+IsingModel::IsingModel(int lattice_length, double T, bool random_spins, int seed){
     L = lattice_length;
     beta = 1/T; 
     rand_spins = random_spins;

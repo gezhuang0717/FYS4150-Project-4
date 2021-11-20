@@ -30,7 +30,19 @@ void print_help_message() {
     cout << "\t-z\tZooms in and finds values. Provide L, T_min, T_max and seed as system argunments" << endl;
 }
 
-void sample(vector<int> &sampled_energy, vector<int> &sampled_magnetization_abs, const int iters, int L, double T, int seed, int burn_in_time = 1000, bool random_spins = true){
+/**
+ * @brief Samples from IsingModel, once per MCMC-cycle
+ * 
+ * @param sampled_energy Destination of the sampled energy
+ * @param sampled_magnetization_abs Destination of the samped absouloute magnetization
+ * @param iters Number of samples to make
+ * @param L Size of the IsingModel
+ * @param T Temperature of the IsingModel
+ * @param seed Seed for RNG
+ * @param burn_in_time Number of iterations to discard
+ * @param random_spins If True, starting spin state of the IsingModel is chosen randomly. Else all spins are poining in the same direction
+ */
+void sample(vector<int> &sampled_energy, vector<int> &sampled_magnetization_abs, const int iters, int L, double T, int seed, int burn_in_time = 10000, bool random_spins = true){
     IsingModel model(L, T, random_spins, seed);
     for (int i = -burn_in_time; i < iters; i++){
         model.metropolis();
@@ -66,7 +78,19 @@ void write_distributions(const int iters, const int L, double T, int seed, strin
     stat_utils::write_distribution(buckets_m_abs, outfile_m_abs);
 }
 
-
+/**
+ * @brief From sampled values, estimates <&epsilon;> <|m|>, C_v and &chi;
+ * 
+ * @param sampled_energy Energy sampled from IsingModel
+ * @param sampled_magnetization_abs Absuloute magnetization sampled from IsingModel
+ * @param sample_size Size of the samples to consider. Note this could be less than the number of samples available, if we would like to estimate using only the first samples
+ * @param L Size of the IsingModel
+ * @param T Temperature of the IsingModel
+ * @param expected_epsilon Destinatipn of <&epsilon;>
+ * @param expected_m_abs Destination of <|m|>
+ * @param c_v Destination of C_v
+ * @param chi Destination of &chi;
+ */
 void values(vector<int> sampled_energy, vector<int> sampled_magnetization_abs, int sample_size, int L, double T, 
 double &expected_epsilon, double &expected_m_abs, double &c_v, double &chi){
     int N = L * L;
@@ -100,6 +124,15 @@ void write_values_to_file(int L, double T, int seed, ofstream &outfile){
     outfile << T << "," << expected_epsilon << "," << expected_m_abs << "," << c_v << "," << chi << endl;
 }
 
+/**
+ * @brief Trying to estimate the burn in time in the IsingModel
+ * 
+ * @param N TODO: Rename?
+ * @param L Size of the IsingModel
+ * @param T Temperature of the IsingModel
+ * @param seed seed for RNG
+ * @param random_spins f True, starting spin state of the IsingModel is chosen randomly. Else all spins are poining in the same direction
+ */
 void find_burn_in_time(int N, int L, double T, int seed, bool random_spins=true){
     vector<int> sampled_E;
     vector<int> sampled_M_abs;
@@ -161,6 +194,12 @@ int test2x2(int seed){
     return using_sample_size;
 }
 
+/**
+ * @brief Performs timing to compare parallel and serial code
+ * 
+ * @param L Size of the IsingModel
+ * @param T Temperature of the IsingModel
+ */
 void timing_parallel_vs_serial(int L, double T) {
     int repeats = 10;
 
@@ -213,10 +252,17 @@ void timing_parallel_vs_serial(int L, double T) {
     timingfile.close();
 }
 
-string to_string(double a, int precision){
-    return to_string(a).substr(0, to_string(a).find(".") + precision + 1);
-}
-
+/**
+ * @brief Writes estimated values from IsingModels within the specified range of temperatures
+ * Important: If this is ran on multiple cores, you may not assume the file is sorted by temperature!
+ * 
+ * @param T_min The minimum temperature to estimate for
+ * @param T_max The maximum temperature to estimate for (non inclusive)
+ * @param L The size of the IsingModel
+ * @param steps The number of temperatures between T_min and T_max
+ * @param seed Seed for RNG
+ * @param filename Filename of the outputfile
+ */
 void look_between_temperatures(double T_min, double T_max, int L, int steps, int &seed, string filename){
     cout << "Testing for " << L << "x" << L << endl;
     double dT = (T_max - T_min) / steps;
@@ -237,7 +283,8 @@ int main(int argc, char *argv[]){
     else if (has_flag("-t", argv, argv + argc)) {
         int seed = 3875623;
         cout << "Testing for convergence against analytical results in the 2x2 case. Needed sample size: " << test2x2(seed) << endl;
-        }
+        timing_parallel_vs_serial(20, 2.);
+    }
     else if (has_flag("-b", argv, argv + argc)) { 
         int seed =  23344;   
         for (int L: {20, 40, 60, 80, 100}){
