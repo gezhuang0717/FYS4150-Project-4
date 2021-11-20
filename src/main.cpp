@@ -229,22 +229,23 @@ int main(int argc, char *argv[]){
         double T_min = 2.1;
         double T_max = 2.4;
 
-        for (int L = 20; L <= 200; L += 20) {
+        for (int L = 20; L <= 160; L += 20) {
             look_between_temperatures(T_min, T_max, L, steps, seed);
         }
         return 0;
     }
-    if (argc < 4){
-        cout << "Please include L,  T_min and T_max" << endl;
+    
+    if (argc < 5){
+        cout << "Please include L, T_min, T_max and seed" << endl;
         return 1;
     }
 
     int L = atoi(argv[1]);
     double T_min = atof(argv[2]);
     double T_max = atof(argv[3]);
+    seed = atoi(argv[4]);
 
-
-    // look_between_temperatures(T_min, T_max, L, steps, seed);
+    look_between_temperatures(T_min, T_max, L, steps, seed);
     
     // for (int L: {20, 40, 60, 80, 100}){
     //     find_burn_in_time(30000, L, 1, seed++, false);
