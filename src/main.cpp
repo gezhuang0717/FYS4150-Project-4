@@ -256,14 +256,10 @@ int main(int argc, char *argv[]){
     else if (has_flag("-s", argv, argv + argc)){
         int seed = 456788;
         int steps = 24;
-
-        if (argc == 1){
-            double T_min = 2.1;
-            double T_max = 2.4;
-
-            for (int L = 20; L <= 160; L += 20) {
-                look_between_temperatures(T_min, T_max, L, steps, seed, "output/values_L=" + to_string(L) + ".csv");
-            }
+        double T_min = 2.1;
+        double T_max = 2.4;
+        for (int L = 20; L <= 160; L += 20) {
+            look_between_temperatures(T_min, T_max, L, steps, seed, "output/values_L=" + to_string(L) + ".csv");
         }
     }
     else if (has_flag("-z", argv, argv + argc)){
