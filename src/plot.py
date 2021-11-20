@@ -107,7 +107,7 @@ def estimate_T_inf():
     y = []
     x = []
     for L in range(20, 180, 20):
-        df = pd.read_csv(f"output/values_T=[2.1,2.4]_L={L}.csv")
+        df = pd.read_csv(f"output/values_zoom_L={L}.csv")
         argmax_C_v = df.C_v.idxmax()
         argmax_chi = df.chi.idxmax()
         y.append((df.loc[argmax_C_v]['T'] + df.loc[argmax_chi]['T']) / 2)
@@ -129,8 +129,8 @@ def main():
     #plot_burn_in_time()
     #plot_probability_distribution()
     #plot_values_and_print_max()
-    #estimate_T_inf()
-    zoom()
+    estimate_T_inf()
+    #zoom()
 
 
 if __name__ == "__main__":
