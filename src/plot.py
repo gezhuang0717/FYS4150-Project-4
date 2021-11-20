@@ -74,38 +74,48 @@ def plot_probability_distribution():
 
 
 def plot_values_and_print_max():
-    for L in range(20, 120, 20):
+    for L in range(20, 220, 20):
         print(L)
-        df = pd.read_csv(f"output/values_zoom_L={L}.csv")
+        df = pd.read_csv(f"output/values_T=[2.1,2.4]_L={L}.csv")
         df.sort_values("T", inplace=True, ignore_index=True)
         df.plot(x="T", y="C_v", title=f"L={L}")
         argmax_C_v = df.C_v.idxmax()
         armmax_chi = df.chi.idxmax()
-        print(
-            f"L = {L} - argmax C_v: {df.loc[argmax_C_v]['T']}, argmax chi {df.loc[argmax_C_v]['T']}"
-        )
-        print(
-            f"Look between temperatures {df.loc[min(argmax_C_v, armmax_chi) - 1]['T']} and {df.loc[max(argmax_C_v, armmax_chi) + 1]['T']}"
-        )
+        #print(
+        #    f"L = {L} - argmax C_v: {df.loc[argmax_C_v]['T']}, argmax chi {df.loc[argmax_C_v]['T']}"
+        #)
+        #print(
+        #    f"Look between temperatures {df.loc[min(argmax_C_v, armmax_chi) - 1]['T']} and {df.loc[max(argmax_C_v, armmax_chi) + 1]['T']}"
+        #)
         plt.show()
 
 
 def estimate_T_inf():
     y = []
     x = []
-    for L in range(20, 120, 20):
-        df = pd.read_csv(f"output/values_zoom_L={L}.csv")
+    for L in range(20, 180, 20):
+        df = pd.read_csv(f"output/values_T=[2.1,2.4]_L={L}.csv")
         argmax_C_v = df.C_v.idxmax()
         argmax_chi = df.chi.idxmax()
         y.append((df.loc[argmax_C_v]['T'] + df.loc[argmax_chi]['T']) / 2)
         x.append(1 / L)
-    print(sts.linregress(x, y).intercept)
-
+    linear_fit = sts.linregress(x, y)
+    plt.scatter(x, y)
+    estimate = linear_fit.intercept
+    plt.plot([0] + x, estimate + linear_fit.slope * np.asarray([0] + x))
+    plt.plot([0, 0], [estimate, max(y)], color="black")
+    plt.yticks([estimate])
+    plt.scatter([0], [estimate], s=40, label=f"{estimate: .3f}")
+    plt.legend()
+    plt.ylabel(r"$T_c$")
+    plt.xlabel(r"$L^{-1}$")
+    print(estimate)
+    plt.savefig("plots/T_inf/estimating_T_inf.pdf")
 
 def main():
     #plot_burn_in_time()
     #plot_probability_distribution()
-    plot_values_and_print_max()
+    #plot_values_and_print_max()
     estimate_T_inf()
 
 
