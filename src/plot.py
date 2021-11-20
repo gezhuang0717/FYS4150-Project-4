@@ -103,17 +103,10 @@ def estimate_T_inf():
 
 
 def main():
-<<<<<<< HEAD
-    plot_burn_in_time(40)
-    # plot_probability_distribution()
-    # plot_values_and_print_max()
-    # estimate_T_inf()
-=======
     #plot_burn_in_time()
     #plot_probability_distribution()
     plot_values_and_print_max()
     estimate_T_inf()
->>>>>>> 9a031d8c9559f5cbd1b998e4406de2e7cd03a1d9
 
 
 if __name__ == "__main__":
