@@ -81,23 +81,21 @@ def plot_probability_distribution():
 
 
 def plot_values():
-    for L in range(20, 180, 20):
-        df = pd.read_csv(f"output/values_T=[2.1,2.4]_L={L}.csv")
+    for L in range(20, 160, 20):
+        df = pd.read_csv(f"output/values_L={L}.csv")
         df.sort_values("T", inplace=True, ignore_index=True)
         df.plot(x="T", y="C_v", title=f"L={L}")
-        plt.show()
+        plt.figname("sjs")
 
 
 def estimate_T_inf():
     y = []
     x = []
-    for L in range(20, 160, 20):
+    for L in range(40, 160, 20):
         df = pd.read_csv(f"output/values_zoom_L={L}.csv")
-        quad_fit_C_v = np.poly1d(np.polyfit(df["T"].to_numpy(), df["C_v"].to_numpy(), 2))
-        quad_fit_chi = np.poly1d(np.polyfit(df["T"].to_numpy(), df["chi"].to_numpy(), 2))
-        T_c_C_v = quad_fit_C_v.deriv().roots[0]
-        T_c_chi = quad_fit_chi.deriv().roots[0]
-        y.append((T_c_C_v + T_c_chi) / 2)
+        argmax_C_v = df.C_v.idxmax()
+        argmax_chi = df.chi.idxmax()
+        y.append((df.iloc[argmax_C_v]['T'] + df.iloc[argmax_chi]['T']) / 2)
         x.append(1 / L)
     linear_fit = sts.linregress(x, y)
     plt.title(r"Observations of $T_c(L)$ against $L^{-1}$ and linear fit to find $T_c(\infty)$")
@@ -117,7 +115,7 @@ def estimate_T_inf():
 def main():
     #plot_burn_in_time()
     #plot_probability_distribution()
-    #plot_values_and_print_max()
+    #plot_values()
     estimate_T_inf()
 
 
