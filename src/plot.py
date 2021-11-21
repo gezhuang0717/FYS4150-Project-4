@@ -81,11 +81,15 @@ def plot_probability_distribution():
 
 
 def plot_values():
-    for L in range(20, 160, 20):
-        df = pd.read_csv(f"output/values_L={L}.csv")
-        df.sort_values("T", inplace=True, ignore_index=True)
-        df.plot(x="T", y="C_v", title=f"L={L}")
-        plt.figname("sjs")
+    dfs = {L: pd.read_csv(f"output/values_L={L}.csv") for L in range(20, 160, 20)}
+    for value in ["<epsilon>", "<|m|>", "C_v", "chi"]:
+        for L in range(40, 160, 20):
+            df = dfs[L]
+            df.sort_values("T", inplace=True, ignore_index=True)
+            plt.plot(df["T"], df[value], label=f"L={L}")
+        plt.legend()
+        plt.savefig(f"plots/values/plot_{value}.pdf")
+        plt.cla()
 
 
 def estimate_T_inf():
@@ -115,7 +119,7 @@ def estimate_T_inf():
 def main():
     #plot_burn_in_time()
     #plot_probability_distribution()
-    #plot_values()
+    plot_values()
     estimate_T_inf()
 
 
