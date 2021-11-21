@@ -318,7 +318,7 @@ int main(int argc, char *argv[]){
         int L = atoi(argv[2]);
         double T_min = atof(argv[3]);
         double T_max = atof(argv[4]);
-        int seed = atoi(argv5]);
+        int seed = atoi(argv[5]);
         look_between_temperatures(T_min, T_max, L, steps, seed, "output/values_zoom_L=" + to_string(L) + ".csv");
     }
     return 0;
