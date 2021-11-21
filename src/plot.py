@@ -67,11 +67,17 @@ def plot_burn_in_time(L=20):
 
 
 def plot_probability_distribution():
-    df = pd.read_csv("output/distribution_epsilon_L=20_T=1.csv")
-    print(df.epsilon)
-    print(df.p)
-    plt.bar(df.epsilon, df.p)
-    plt.show()
+    L = "20"
+    for T in ['1.0', '2.1', '2.4']:
+        df = pd.read_csv(f"output/samples_L={L}_T={T}.csv")
+        plt.title(fr"Estimated probability distribution of $\epsilon$ at T={T}")
+        plt.xlabel(r"$\epsilon$")
+        plt.ylabel(fr"$p(\epsilon; {T})$")
+        plt.hist(df.epsilon, bins="auto", density=True)
+        plt.savefig(f"plots/distributions/epsilon_L={L}_T={T}.pdf")
+        plt.cla()
+        print(f"Variance at T={T}: {df.epsilon.var()}")
+
 
 
 def plot_values():
@@ -107,9 +113,9 @@ def estimate_T_inf():
 
 def main():
     #plot_burn_in_time()
-    #plot_probability_distribution()
+    plot_probability_distribution()
     #plot_values_and_print_max()
-    estimate_T_inf()
+    #estimate_T_inf()
 
 
 if __name__ == "__main__":

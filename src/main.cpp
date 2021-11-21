@@ -10,6 +10,7 @@
 #include <memory>
 #include <string>
 #include <chrono>
+#include <sstream>
 
 using namespace std;
 
@@ -25,13 +26,13 @@ void print_help_message() {
     cout << "\t-h\tShow this help message" << endl;
     cout << "\t-t\tTest implementation" << endl;
     cout << "\t-b\tFinds burn in time" << endl;
-    cout << "\t-d\tFinds distribution" << endl;
+    cout << "\t-w\tWrites samples to file. Provide L, T, and seed" << endl;
     cout << "\t-s\tFinds values for L in 20, 40, 60, 80, 100, 120, 140, 160 for T in the range [2.1, 2.4]" << endl;
     cout << "\t-z\tZooms in and finds values. Provide L, T_min, T_max and seed as system argunments" << endl;
 }
 
-/**
- * @brief Samples from IsingModel, once per MCMC-cycle
+/*
+ * @brief Samples from IsingModel, once per MC-cycle
  * 
  * @param sampled_energy Destination of the sampled energy
  * @param sampled_magnetization_abs Destination of the samped absouloute magnetization
@@ -54,28 +55,28 @@ void sample(vector<int> &sampled_energy, vector<int> &sampled_magnetization_abs,
 
 
 /**
- * @brief Produces sampled distribution of &epsilon; and |m|
+ * @brief writes samples of &epsilon; and |m|
  * 
- * @param N Numbers of MCMC-iterations
+ * @param N Numbers of MC-iterations
  * @param L Size of the Lattice (will have L * L elements)
  * @param T temperature
  * @param burn_in_time Number of iterations to discard when producing estimates 
  */
-void write_distributions(const int iters, const int L, double T, int seed, string filename_epsilon, string filename_m_abs, int burn_in_time = 1000){ // note we don't have any indications on what the burn_in_time is yet
-    // IsingModel model(L, T, true, seed); // unused?
+void write_samples(const int iters, const int L, double T, int seed, int burn_in_time = 10000){
     const int N = L * L;
     vector<int> sampled_energy;
     vector<int> sampled_magnetization_abs;
     sample(sampled_energy, sampled_magnetization_abs, iters, L, T, seed);
     auto scale = [N](int x){return (double)x / N;};
-    map<double, double> buckets_epsilon = stat_utils::distribution(sampled_energy, iters, scale);
-    map<double, double> buckets_m_abs = stat_utils::distribution(sampled_magnetization_abs, iters, scale);
-    ofstream outfile_epsilon(filename_epsilon);
-    outfile_epsilon << "epsilon,p" << endl;
-    stat_utils::write_distribution(buckets_epsilon, outfile_epsilon);
-    ofstream outfile_m_abs(filename_m_abs);
-    outfile_epsilon << "|m|,p" << endl;
-    stat_utils::write_distribution(buckets_m_abs, outfile_m_abs);
+    ostringstream out;
+    out.precision(1);
+    out << fixed << T;
+    ofstream outfile("output/samples_L=" + to_string(L) + "_T=" + out.str() + ".csv");
+    outfile << "epsilon,|m|" << endl;
+    for (int i = 0; i < iters; i++){
+        outfile << scale(sampled_energy[i]) << "," << sampled_magnetization_abs[i] << endl;
+    }
+    outfile.close();
 }
 
 /**
@@ -294,10 +295,15 @@ int main(int argc, char *argv[]){
             find_burn_in_time(30000, L, 2.4, seed++, true);
         }
     }
-    else if (has_flag("-d", argv, argv + argc)){
-        int seed = 33419;
-        write_distributions(10000, 20, 1, seed++, "output/distribution_epsilon_L=20_T=1.csv", "output/distribution_m_abs_L=20_T=1.csv");
-        write_distributions(10000, 20, 2.4, seed++, "output/distribution_epsilon_L=20_T=2.4.csv", "output/distribution_m_abs_L=20_T=2.4.csv");
+    else if (has_flag("-w", argv, argv + argc)){
+        if (argc < 4){
+            cout << "Please include L, T and seed" << endl;
+            return 1;
+        }
+        int L = atoi(argv[2]);
+        double T = atof(argv[3]);
+        int seed =atoi(argv[4]);
+        write_samples(100000, L, T, seed);
     }
     
     else if (has_flag("-s", argv, argv + argc)){
@@ -305,7 +311,7 @@ int main(int argc, char *argv[]){
         int steps = 24;
         double T_min = 2.1;
         double T_max = 2.4;
-        for (int L = 20; L <= 160; L += 20) {
+        for (int L = 20; L <= 140; L += 20) {
             look_between_temperatures(T_min, T_max, L, steps, seed, "output/values_L=" + to_string(L) + ".csv");
         }
     }
