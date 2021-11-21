@@ -9,11 +9,11 @@ def zoom():
         df.sort_values("T", inplace=True, ignore_index=True)
         margin = 2
         argmax_C_v = df.C_v.idxmax()
-        armmax_chi = df.chi.idxmax()
-        T_min = df.loc[max(0, min(argmax_C_v, armmax_chi) - margin)]['T']
-        T_max = df.loc[min(max(argmax_C_v, armmax_chi) + margin, len(df["T"]) - 1)]['T']
+        argmax_chi = df.chi.idxmax()
+        T_min = df.loc[max(0, min(argmax_C_v, argmax_chi) - margin)]['T']
+        T_max = df.loc[min(max(argmax_C_v, argmax_chi) + margin, len(df["T"]) - 1)]['T']
         print(
-            f"L = {L} - argmax C_v: {df.loc[argmax_C_v]['T']}, argmax chi {df.loc[argmax_C_v]['T']}"
+            f"L = {L} - argmax C_v: {df.loc[argmax_C_v]['T']}, argmax chi {df.loc[argmax_chi]['T']}"
         )
         print(
             f"Look between temperatures {T_min} and {T_max}"
