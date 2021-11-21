@@ -1,7 +1,19 @@
+    """
+    Take the results from initial scanning at a large interval of temperatures,
+    and zoom in at a neighbourhood containting the values for T when C_v and
+    chi attains their maximum.
+    """
+
 import pandas as pd
 import subprocess
 
+
 def zoom():
+    """
+    Take the results from initial scanning at a large interval of temperatures,
+    and zoom in at a neighbourhood containting the values for T when C_v and
+    chi attains their maximum.
+    """
     seed = 9642
     for L in range(20, 160, 20):
         print(L)

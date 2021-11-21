@@ -1,3 +1,11 @@
+"""
+Analytical solution of the IsingModel for the 2x2 case
+
+Use to test against the nummerical implementation
+"""
+
+# TODO: Replace with expressions from paper
+
 import pandas as pd
 import numpy as np
 

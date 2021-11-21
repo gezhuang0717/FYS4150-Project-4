@@ -7,6 +7,9 @@ import analytical_ising_model
 import zoom
 
 def get_all_states(L):
+    """
+    List all possible states of a LxL lattice (equivelant states grouped)
+    """
     N = L ** 2
 
     spins = itertools.product([-1, 1], repeat=N)
