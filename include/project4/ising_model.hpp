@@ -13,22 +13,61 @@ class IsingModel{
         // Performs one Monte Carlo cycle of Metropolis algorithm and
         // Updates energy- and magnetization-values.
         void metropolis();
-        // Should only be called by constructor, but kept public as it might be useful
-        // for debugging later.
-        void set_energy();
+        /**
+         * @brief Get the energy of the IsingModel
+         * 
+         * @return int 
+         */
         int get_energy();
-        // Should only be called by constructor, but kept public as it might be useful
-        // for debugging later.
-        void set_magnetization();
+        /**
+         * @brief Get the magnetization of the IsingModel
+         * 
+         * @return int 
+         */
         int get_magnetization();
+        /**
+         * @brief Get m of the IsingModel
+         * 
+         * @return double 
+         */
         double get_m();
+        /**
+         * @brief Get w from the precomputed set of exponential values
+         * 
+         * @param delta_E The change of energy with this spin flip
+         * @return double 
+         */
         double get_w(int delta_E);
+        /**
+         * @brief Get the epsilon of the IsingModel
+         * 
+         * @return double 
+         */
         double get_epsilon();
+        /**
+         * @brief Print the spin state
+         * 
+         */
         void print();
     private:
-        // Called by constructor to initialise 2D vector of spins.
-        // (currently a placeholder-function that sets every other spin equal to -1)
+        
+        /**
+         * @brief 
+         * Called by constructor to initialise 2D vector of spins.
+         * 
+         * @param L Size of the ising model
+         */
         void initialize_spins(int L);
+        /**
+         * @brief Set the initial magnetization
+         * 
+         */
+        void set_magnetization();
+        /**
+         * @brief Set the initial energy
+         * 
+         */
+        void set_energy();
         mt19937 rng;
         uniform_int_distribution<int> rand_index;
         uniform_int_distribution<int> rand_1_or_0;
@@ -39,6 +78,10 @@ class IsingModel{
         int M;
         double beta;
         bool rand_spins;
+        /**
+         * @brief Precomputes exponential values that are needed every MC-cycle, but are limited to five possible values
+         * 
+         */
         void precompute_exp_factors();
         double exp_factors[5];
 };
