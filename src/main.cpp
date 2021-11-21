@@ -25,7 +25,8 @@ void print_help_message() {
     cout << "Options:" << endl;
     cout << "\t-h\tShow this help message" << endl;
     cout << "\t-t\tTest implementation" << endl;
-    cout << "\t-b\tFinds burn in time" << endl;
+    cout << "\t-b\tFinds burn-in time" << endl;
+    cout << "\t-bm\tFinds burn-in time for magnetization, unordered initial spins" << endl;
     cout << "\t-w\tWrites samples to file. Provide L, T, and seed" << endl;
     cout << "\t-s\tFinds values for L in 20, 40, 60, 80, 100, 120, 140, 160 for T in the range [2.1, 2.4]" << endl;
     cout << "\t-z\tZooms in and finds values. Provide L, T_min, T_max and seed as system argunments" << endl;
@@ -287,13 +288,23 @@ int main(int argc, char *argv[]){
         timing_parallel_vs_serial(20, 2.);
     }
     else if (has_flag("-b", argv, argv + argc)) { 
-        int seed =  23344;   
-        for (int L: {20, 40, 60, 80, 100}){
-            find_burn_in_time(30000, L, 1, seed++, false);
-            find_burn_in_time(30000, L, 1, seed++, true);
-            find_burn_in_time(30000, L, 2.4, seed++, false);
-            find_burn_in_time(30000, L, 2.4, seed++, true);
-        }
+        int seed =  23344;
+        // find burn-in time for L=20
+        find_burn_in_time(3000, 20, 1, seed++, false);
+        find_burn_in_time(3000, 20, 1, seed++, true);
+        find_burn_in_time(3000, 20, 2.4, seed++, false);
+        find_burn_in_time(3000, 20, 2.4, seed++, true);
+
+        // find burn-in time for L=100
+        find_burn_in_time(40000, 100, 1, seed++, false);
+        find_burn_in_time(40000, 100, 1, seed++, true);
+        find_burn_in_time(40000, 100, 2.4, seed++, false);
+        find_burn_in_time(40000, 100, 2.4, seed++, true);
+
+    }
+    else if (has_flag("-bm", argv, argv + argc)){
+        int seed = 23345;
+        find_burn_in_time(20000, 20, 1.0, seed, true);
     }
     else if (has_flag("-w", argv, argv + argc)){
         if (argc < 4){

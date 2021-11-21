@@ -1,3 +1,4 @@
+from pandas.io.parsers import read_csv
 import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,63 +8,61 @@ import subprocess
 
 sns.set_theme()
 
+def plot_abs_m_unordered(L=20):
+    """Plots expected value for epsilon and abs(m) for T=1.0
+    and unordered initial spins"""
+    filename = "burn_in_L_" + str(L) + "_T_1.000000_random.csv"
+    df = pd.read_csv("output/" + filename)
+    plt.title("$<|m|>$ for T=1.0 and unordered initial spins")
+    plt.xlabel("N")
+    plt.ylabel("$<|m|>$")
+    plt.plot(df.N, df.expected_M)
+    plt.savefig("plots/burn_in/magnetization_for_L_equals_" + str(L) +".pdf")
 
-def plot_burn_in_time(L=20):
-    filenames = [
+def plot_burn_in_times(L=20):
+    filenames_ordered = [
         "burn_in_L_" + str(L) + "_T_1.000000_nonrandom.csv",
-        "burn_in_L_" + str(L) + "_T_1.000000_random.csv",
-        "burn_in_L_" + str(L) + "_T_2.400000_nonrandom.csv",
-        "burn_in_L_" + str(L) + "_T_2.400000_random.csv",
-    ]
-    temps = [1, 1, 2.4, 2.4]
-    spin_orientation = ["ordered", "unordered", "ordered", "unordered"]
 
-    for filename, T, orientation in zip(filenames, temps, spin_orientation):
+        "burn_in_L_" + str(L) + "_T_2.400000_nonrandom.csv",
+        
+    ]
+    filenames_unordered = [
+        "burn_in_L_" + str(L) + "_T_1.000000_random.csv",
+        "burn_in_L_" + str(L) + "_T_2.400000_random.csv"
+    ]
+
+    temps = [1, 2.4]
+    fig, axs = plt.subplots(2, 2)
+    for i, (T, filename) in enumerate(zip(temps, filenames_unordered)):
         df = pd.read_csv("output/" + filename)
-        plt.plot(df.N, df.expected_E)
-        plt.title(
-            "Calculated $<\epsilon>$ for T="
-            + str(T)
-            + ", L="
-            + str(L)
-            + ", and "
-            + orientation
-            + " initial spins"
-        )
-        plt.xlabel("N")
-        plt.ylabel("$<\epsilon>$")
-        plt.savefig(
-            "plots/burn_in/expected_E" 
-            + str(L) 
-            + "_T_ " 
-            + str(T) 
-            + "_" 
-            + orientation 
-            + ".pdf")
-        # plt.show()
-        plt.cla()
-        plt.plot(df.N, df.expected_M)
-        plt.title(
-            "Calculated <|m|> for T="
-            + str(T)
-            + ", L="
-            + str(L)
-            + ", and "
-            + orientation
-            + " initial spins"
-        )
-        plt.xlabel("N")
-        plt.ylabel("<|m|>")
-        plt.savefig(
-            "plots/burn_in/expected_m_abs" 
-            + str(L) 
-            + "_T_ " 
-            + str(T) 
-            + "_" 
-            + orientation 
-            + ".pdf")
-        # plt.show()
-        plt.cla()
+
+        axs[i][0].plot(df.N, df.expected_E)
+        axs[i][0].set_title("$<\epsilon>$ for T=" + str(T))
+        axs[i][0].set(xlabel=("N"), ylabel=("$<\epsilon>$ [J/$k_B$]"))
+
+        axs[i][1].plot(df.N, df.expected_M)
+        axs[i][1].set_title("$<|m|>$ for T=" + str(T))
+        axs[i][1].set(xlabel=("N"), ylabel=("$<|m|>$ [1]"))
+    fig.suptitle("Expected values for unordered initial spins")
+    plt.tight_layout()
+    plt.savefig("plots/burn_in/burn_in_time_unordered_L_equals_" + str(L) + ".pdf")
+    plt.cla()
+
+    fig, axs = plt.subplots(2, 2)
+    for i, (T, filename) in enumerate(zip(temps, filenames_ordered)):
+        df = pd.read_csv("output/" + filename)
+
+        axs[i][0].plot(df.N, df.expected_E)
+        axs[i][0].set_title("$<\epsilon>$ for T=" + str(T))
+        axs[i][0].set(xlabel=("N"), ylabel=("$<\epsilon>$ [J/$k_B$]"))
+
+        axs[i][1].plot(df.N, df.expected_M)
+        axs[i][1].set_title("$<|m|>$ for T=" + str(T))
+        axs[i][1].set(xlabel=("N"), ylabel=("$<|m|>$ [1]"))
+    fig.suptitle("Expected values for ordered initial spins")
+    plt.tight_layout()
+    plt.savefig("plots/burn_in/burn_in_time_ordered_L_equals_" + str(L) + ".pdf")
+    plt.cla()
 
 
 def plot_probability_distribution():
@@ -115,10 +114,12 @@ def estimate_T_inf():
     plt.savefig("plots/T_inf/estimating_T_inf.pdf")
 
 def main():
-    #plot_burn_in_time()
-    #plot_probability_distribution()
-    #plot_values_and_print_max()
-    estimate_T_inf()
+    plot_abs_m_unordered()
+    # plot_burn_in_times()
+    # plot_burn_in_times(100)
+    # plot_probability_distribution()
+    # plot_values_and_print_max()
+    # estimate_T_inf()
 
 
 if __name__ == "__main__":
