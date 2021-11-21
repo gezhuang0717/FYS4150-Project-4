@@ -3,7 +3,7 @@ import subprocess
 
 def zoom():
     seed = 9642
-    for L in range(20, 180, 20):
+    for L in range(20, 160, 20):
         print(L)
         df = pd.read_csv(f"output/values_L={L}.csv")
         df.sort_values("T", inplace=True, ignore_index=True)
