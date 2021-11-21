@@ -80,46 +80,61 @@ def plot_probability_distribution():
 
 
 def plot_values():
-    for L in range(20, 180, 20):
-        df = pd.read_csv(f"output/values_T=[2.1,2.4]_L={L}.csv")
-        df.sort_values("T", inplace=True, ignore_index=True)
-        df.plot(x="T", y="C_v", title=f"L={L}")
-        plt.show()
+    dfs = {L: pd.read_csv(f"output/values_L={L}.csv") for L in range(20, 160, 20)}
+    for value in ["<epsilon>", "<|m|>", "C_v", "chi"]:
+        for L in range(40, 160, 20):
+            df = dfs[L]
+            df.sort_values("T", inplace=True, ignore_index=True)
+            plt.plot(df["T"], df[value], label=f"L={L}")
+        plt.legend()
+        plt.savefig(f"plots/values/plot_{value}.pdf")
+        plt.cla()
 
 
 def estimate_T_inf():
-    y = []
+    y_C_v = []
+    y_chi = []
     x = []
-    for L in range(20, 160, 20):
+    for L in range(40, 160, 20):
         df = pd.read_csv(f"output/values_zoom_L={L}.csv")
-        quad_fit_C_v = np.poly1d(np.polyfit(df["T"].to_numpy(), df["C_v"].to_numpy(), 2))
-        quad_fit_chi = np.poly1d(np.polyfit(df["T"].to_numpy(), df["chi"].to_numpy(), 2))
-        T_c_C_v = quad_fit_C_v.deriv().roots[0]
-        T_c_chi = quad_fit_chi.deriv().roots[0]
-        y.append((T_c_C_v + T_c_chi) / 2)
+        argmax_C_v = df.C_v.idxmax()
+        argmax_chi = df.chi.idxmax()
+        y_C_v.append(df.iloc[argmax_C_v]['T'])
+        y_chi.append(df.iloc[argmax_chi]['T'])
         x.append(1 / L)
-    linear_fit = sts.linregress(x, y)
+    linear_fit_C_v = sts.linregress(x, y_C_v)
+    linear_fit_chi = sts.linregress(x, y_chi)
     plt.title(r"Observations of $T_c(L)$ against $L^{-1}$ and linear fit to find $T_c(\infty)$")
-    plt.scatter(x, y, label="Observations")
-    estimate = linear_fit.intercept
-    plt.plot([0] + x, estimate + linear_fit.slope * np.asarray([0] + x))
-    plt.plot([0, 0], [estimate, max(y)], color="black")
-    plt.yticks([estimate], [f"{estimate: .3f}"])
-    plt.xlabel([0])
-    plt.scatter([0], [estimate], s=40, label=fr"$T_c(\infty) = {estimate: .3f}$")
-    plt.legend()
-    plt.ylabel(r"$T_c$")
-    plt.xlabel(r"$L^{-1}$")
-    print(estimate)
+    fig, axs = plt.subplots(1, 2)
+    fig.tight_layout()
+    axs[0].scatter(x, y_C_v, label=r"Observed $T_c$")
+    estimate_C_v = linear_fit_C_v.intercept
+    axs[0].plot([0] + x, estimate_C_v + linear_fit_C_v.slope * np.asarray([0] + x))
+    axs[0].plot([0, 0], [estimate_C_v, max(y_C_v)], color="black")
+    axs[0].scatter([0], [estimate_C_v], s=40, label=fr"$T_c(\infty) = {estimate_C_v: .3f}$")
+    axs[0].legend()
+    axs[0].set_title(r"Estimate using $C_v$")
+
+    axs[1].scatter(x, y_chi, label=r"Observed $T_c$")
+    estimate_chi = linear_fit_chi.intercept
+    axs[1].plot([0] + x, estimate_chi + linear_fit_chi.slope * np.asarray([0] + x))
+    axs[1].plot([0, 0], [estimate_chi, max(y_chi)], color="black")
+    axs[1].scatter([0], [estimate_chi], s=40, label=fr"$T_c(\infty) = {estimate_chi: .3f}$")
+    axs[1].legend()
+    axs[1].set_title(r"Estimate using $\chi$")
+    
+    plt.sca(axs[0])
+    plt.yticks([estimate_C_v], [f"{estimate_C_v: .3f}"])
+    plt.sca(axs[1])
+    plt.yticks([estimate_chi], [f"{estimate_chi: .3f}"])
+    print(estimate_C_v)
     plt.savefig("plots/T_inf/estimating_T_inf.pdf")
 
 def main():
-    plot_abs_m_unordered()
-    # plot_burn_in_times()
-    # plot_burn_in_times(100)
-    # plot_probability_distribution()
-    # plot_values_and_print_max()
-    # estimate_T_inf()
+    #plot_burn_in_time()
+    #plot_probability_distribution()
+    plot_values()
+    estimate_T_inf()
 
 
 if __name__ == "__main__":
