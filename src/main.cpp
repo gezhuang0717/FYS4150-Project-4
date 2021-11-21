@@ -315,10 +315,10 @@ int main(int argc, char *argv[]){
              cout << "Please include L, T_min, T_max and seed" << endl;
             return 1;
         }
-        int L = atoi(argv[1]);
-        double T_min = atof(argv[2]);
-        double T_max = atof(argv[3]);
-        int seed = atoi(argv[4]);
+        int L = atoi(argv[2]);
+        double T_min = atof(argv[3]);
+        double T_max = atof(argv[4]);
+        int seed = atoi(argv5]);
         look_between_temperatures(T_min, T_max, L, steps, seed, "output/values_zoom_L=" + to_string(L) + ".csv");
     }
     return 0;
