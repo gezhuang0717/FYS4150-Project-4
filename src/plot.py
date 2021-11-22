@@ -92,6 +92,7 @@ def plot_probability_distribution():
         plt.savefig(f"plots/distributions/epsilon_L={L}_T={T}.pdf")
         plt.cla()
         print(f"Variance at T={T}: {df.epsilon.var()}")
+        print(f"Expected value at T={T}: {df.epsilon.mean()}")
 
 
 
