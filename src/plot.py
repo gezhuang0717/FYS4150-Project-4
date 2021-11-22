@@ -5,8 +5,21 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import scipy.stats as stats
 import subprocess
+import matplotlib
 
 sns.set_theme()
+#  matplotlib.rcParams["mathtext.fontset"] = "stix"
+#  matplotlib.rcParams["font.family"] = "STIXGeneral"
+
+#  plt.rcParams["text.latex.preamble"] = [r"\usepackage{lmodern}"]
+#  # Options
+#  params = {
+#      "text.usetex": True,
+#      "font.size": 10,
+#      "font.family": "lmodern",
+#      "text.latex.unicode": True,
+#  }
+#  plt.rcParams.update(params)
 
 
 def plot_abs_m_unordered(L=20):
@@ -28,56 +41,33 @@ def plot_abs_m_unordered(L=20):
 
 
 def plot_burn_in_times(L=20):
-    """Plots burn in time for different temperatures
+    """Plots burn in time for different temperatures for both ordered and unordered
 
     Parameters
     ----------
         L : int
             Lattice size
     """
-    filenames_ordered = [
-        "burn_in_L_" + str(L) + "_T_1.000000_nonrandom.csv",
-        "burn_in_L_" + str(L) + "_T_2.400000_nonrandom.csv",
-    ]
-    filenames_unordered = [
-        "burn_in_L_" + str(L) + "_T_1.000000_random.csv",
-        "burn_in_L_" + str(L) + "_T_2.400000_random.csv",
-    ]
-
     temps = [1, 2.4]
-    fig, axs = plt.subplots(2, 2)
-    for i, (T, filename) in enumerate(zip(temps, filenames_unordered)):
-        df = pd.read_csv("output/" + filename)
+    for randomness, order_type in zip(
+        ["random", "nonrandom"], ["unordered", "ordered"]
+    ):
+        _, axs = plt.subplots(2, 2)
+        filenames = [f"burn_in_L_{L}_T_{T:.6f}_{randomness}.csv" for T in temps]
+        for i, (T, filename) in enumerate(zip(temps, filenames)):
+            df = pd.read_csv("output/" + filename)
 
-        axs[i][0].plot(df.N, df.expected_E)
-        axs[i][0].set_title("$<\epsilon>$ for T=" + str(T) + "J / $k_B$")
-        axs[i][0].set(xlabel=("N"), ylabel=("$<\epsilon>$ [J]"))
+            axs[i][0].plot(df.N, df.expected_E)
+            axs[i][0].set_title(rf"$<\epsilon>$ for $T={T}J/k_B$")
+            axs[i][0].set(xlabel=(r"$N$"), ylabel=(r"$<\epsilon>$ [J]"))
 
-        axs[i][1].plot(df.N, df.expected_M)
-        axs[i][1].set_title("$<|m|>$ for T=" + str(T) + "J / $k_B$")
-        axs[i][1].set(xlabel=("N"), ylabel=("$<|m|>$ [1]"))
-    fig.suptitle("Expected values for unordered initial spins")
-    plt.tight_layout()
-    plt.savefig("plots/burn_in/burn_in_time_unordered_L_equals_" + str(L) + ".pdf")
-    plt.cla()
-
-    fig, axs = plt.subplots(2, 2)
-    for i, (T, filename) in enumerate(zip(temps, filenames_ordered)):
-        df = pd.read_csv("output/" + filename)
-
-        axs[i][0].plot(df.N, df.expected_E)
-        axs[i][0].set_title("$<\epsilon>$ for T=" + str(T) + "J / $k_B$")
-        axs[i][0].set(xlabel=("N"), ylabel=("$<\epsilon>$ [J]"))
-
-        axs[i][1].plot(df.N, df.expected_M)
-        axs[i][1].set_title("$<|m|>$ for T=" + str(T) + "J / $k_B$")
-        axs[i][1].set(xlabel=("N"), ylabel=("$<|m|>$ [1]"))
-    fig.suptitle("Expected values for ordered initial spins")
-    plt.tight_layout()
-    plt.savefig("plots/burn_in/burn_in_time_ordered_L_equals_" + str(L) + ".pdf")
-    plt.cla()
-    plt.clf()
-
+            axs[i][1].plot(df.N, df.expected_M)
+            axs[i][1].set_title(rf"$<|m|>$ for $T={T}J/k_B$")
+            axs[i][1].set(xlabel=(r"$N$"), ylabel=(r"$<|m|>$ [1]"))
+        plt.tight_layout()
+        plt.savefig(f"plots/burn_in/burn_in_time_{order_type}_L_equals_{L}.pdf")
+        plt.cla()
+        plt.clf()
 
 
 def plot_probability_distribution():
@@ -95,22 +85,26 @@ def plot_probability_distribution():
         print(f"Expected value at T={T}: {df.epsilon.mean()}")
 
 
-
-
 def plot_values():
     """Plots expected values for different lattice sizes"""
     fig, axs = plt.subplots(2, 2, sharex=True)
     fig.suptitle("Plotting estimated values for different sizes of the Ising model")
     dfs = {L: pd.read_csv(f"output/values_L={L}.csv") for L in range(20, 160, 20)}
-    for i, (value, ylabel, unit) in enumerate(zip(["<epsilon>", "<|m|>", "C_v", "chi"], [r"<\epsilon>", "<|m|>", "C_v", r"\chi"], ["J", "1", "k_B", "1 / J"])):
-        plt.sca(axs[i // 2] [i % 2])
+    for i, (value, ylabel, unit) in enumerate(
+        zip(
+            ["<epsilon>", "<|m|>", "C_v", "chi"],
+            [r"<\epsilon>", "<|m|>", "C_v", r"\chi"],
+            ["J", "1", "k_B", "1 / J"],
+        )
+    ):
+        plt.sca(axs[i // 2][i % 2])
         for L in range(40, 160, 20):
             df = dfs[L]
             df.sort_values("T", inplace=True, ignore_index=True)
             plt.plot(df["T"], df[value], label=f"L={L}")
         plt.ylabel(f"${ylabel}$ [${unit}$]")
         plt.xlabel("T")
-        plt.legend(prop={'size': 6})
+        plt.legend(prop={"size": 6})
     plt.tight_layout()
     plt.savefig(f"plots/values/values.pdf")
     plt.clf()
@@ -124,19 +118,21 @@ def estimate_T_inf(value: str):
     for L in range(40, 160, 20):
         df = pd.read_csv(f"output/values_zoom_L={L}.csv")
         argmax = df[value].idxmax()
-        y.append(df.iloc[argmax]['T'])
+        y.append(df.iloc[argmax]["T"])
         x.append(1 / L)
     linear_fit = stats.linregress(x, y)
     plt.cla()
-    plt.title(r"Observations of $T_c(L)$ against $L^{-1}$ and linear fit to find $T_c(\infty)$")
+    plt.title(
+        r"Observations of $T_c(L)$ against $L^{-1}$ and linear fit to find $T_c(\infty)$"
+    )
     plt.scatter(x, y, label=r"Observed $T_c$")
     estimate = linear_fit.intercept
     plt.plot([0] + x, estimate + linear_fit.slope * np.asarray([0] + x))
-    plt.scatter([0], [estimate], s=40, label=fr"$T_c(\infty) = {estimate: .3f}$")
+    plt.scatter([0], [estimate], s=40, label=fr"$T_c(\infty) = {estimate: .5f}$")
     plt.legend()
     plt.title(fr"Estimating $T_c(\infty)$ using ${label}$")
 
-    plt.yticks([estimate], [f"{estimate: .3f}"])
+    plt.yticks([estimate], [f"{estimate: .5f}"])
     plt.ylabel("$T_c$ [$J / k_B$]")
     plt.xlabel("$L^{-1}$ [1]")
     plt.grid(True, color="k")
@@ -145,7 +141,9 @@ def estimate_T_inf(value: str):
 
 
 def main():
-    plot_burn_in_times()
+    plot_burn_in_times(L=20)
+    plot_burn_in_times(L=100)
+    plot_abs_m_unordered(L=20)
     plot_probability_distribution()
     plot_values()
     estimate_T_inf("C_v")
