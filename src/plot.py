@@ -49,7 +49,6 @@ def plot_burn_in_times(L=20):
             Lattice size
     """
     temps = [1, 2.4]
-<<<<<<< HEAD
     for randomness, order_type in zip(
         ["random", "nonrandom"], ["unordered", "ordered"]
     ):
@@ -63,7 +62,7 @@ def plot_burn_in_times(L=20):
             axs[i][0].set(xlabel=(r"$N$"), ylabel=(r"$<\epsilon>$ [J]"))
 
             axs[i][1].plot(df.N, df.expected_M)
-            axs[i][1].set_title(rf"$<|m|>$ for $T={T}J / $k_B$$")
+            axs[i][1].set_title(rf"$<|m|>$ for $T={T}J/k_B$")
             axs[i][1].set(xlabel=(r"$N$"), ylabel=(r"$<|m|>$ [1]"))
         plt.tight_layout()
         plt.savefig(f"plots/burn_in/burn_in_time_{order_type}_L_equals_{L}.pdf")
@@ -85,22 +84,26 @@ def plot_probability_distribution():
         print(f"Variance at T={T}: {df.epsilon.var()}")
 
 
-
-
 def plot_values():
     """Plots expected values for different lattice sizes"""
     fig, axs = plt.subplots(2, 2, sharex=True)
     fig.suptitle("Plotting estimated values for different sizes of the Ising model")
     dfs = {L: pd.read_csv(f"output/values_L={L}.csv") for L in range(20, 160, 20)}
-    for i, (value, ylabel, unit) in enumerate(zip(["<epsilon>", "<|m|>", "C_v", "chi"], [r"<\epsilon>", "<|m|>", "C_v", r"\chi"], ["J", "1", "k_B", "1 / J"])):
-        plt.sca(axs[i // 2] [i % 2])
+    for i, (value, ylabel, unit) in enumerate(
+        zip(
+            ["<epsilon>", "<|m|>", "C_v", "chi"],
+            [r"<\epsilon>", "<|m|>", "C_v", r"\chi"],
+            ["J", "1", "k_B", "1 / J"],
+        )
+    ):
+        plt.sca(axs[i // 2][i % 2])
         for L in range(40, 160, 20):
             df = dfs[L]
             df.sort_values("T", inplace=True, ignore_index=True)
             plt.plot(df["T"], df[value], label=f"L={L}")
         plt.ylabel(f"${ylabel}$ [${unit}$]")
         plt.xlabel("T")
-        plt.legend(prop={'size': 6})
+        plt.legend(prop={"size": 6})
     plt.tight_layout()
     plt.savefig(f"plots/values/values.pdf")
     plt.clf()
@@ -114,11 +117,13 @@ def estimate_T_inf(value: str):
     for L in range(40, 160, 20):
         df = pd.read_csv(f"output/values_zoom_L={L}.csv")
         argmax = df[value].idxmax()
-        y.append(df.iloc[argmax]['T'])
+        y.append(df.iloc[argmax]["T"])
         x.append(1 / L)
     linear_fit = stats.linregress(x, y)
     plt.cla()
-    plt.title(r"Observations of $T_c(L)$ against $L^{-1}$ and linear fit to find $T_c(\infty)$")
+    plt.title(
+        r"Observations of $T_c(L)$ against $L^{-1}$ and linear fit to find $T_c(\infty)$"
+    )
     plt.scatter(x, y, label=r"Observed $T_c$")
     estimate = linear_fit.intercept
     plt.plot([0] + x, estimate + linear_fit.slope * np.asarray([0] + x))
@@ -135,7 +140,9 @@ def estimate_T_inf(value: str):
 
 
 def main():
-    plot_burn_in_times()
+    plot_burn_in_times(L=20)
+    plot_burn_in_times(L=100)
+    plot_abs_m_unordered(L=20)
     plot_probability_distribution()
     plot_values()
     estimate_T_inf("C_v")
