@@ -8,27 +8,40 @@ import subprocess
 
 sns.set_theme()
 
+
 def plot_abs_m_unordered(L=20):
     """Plots expected value for epsilon and abs(m) for T=1.0
-    and unordered initial spins"""
+    and unordered initial spins
+
+    Parameters
+    ----------
+        L : int
+            Lattice size
+    """
     filename = "burn_in_L_" + str(L) + "_T_1.000000_random.csv"
     df = pd.read_csv("output/" + filename)
     plt.title("$<|m|>$ for T=1.0 and unordered initial spins")
     plt.xlabel("N")
     plt.ylabel("$<|m|>$")
     plt.plot(df.N, df.expected_M)
-    plt.savefig("plots/burn_in/magnetization_for_L_equals_" + str(L) +".pdf")
+    plt.savefig("plots/burn_in/magnetization_for_L_equals_" + str(L) + ".pdf")
+
 
 def plot_burn_in_times(L=20):
+    """Plots burn in time for different temperatures
+
+    Parameters
+    ----------
+        L : int
+            Lattice size
+    """
     filenames_ordered = [
         "burn_in_L_" + str(L) + "_T_1.000000_nonrandom.csv",
-
         "burn_in_L_" + str(L) + "_T_2.400000_nonrandom.csv",
-        
     ]
     filenames_unordered = [
         "burn_in_L_" + str(L) + "_T_1.000000_random.csv",
-        "burn_in_L_" + str(L) + "_T_2.400000_random.csv"
+        "burn_in_L_" + str(L) + "_T_2.400000_random.csv",
     ]
 
     temps = [1, 2.4]
@@ -68,8 +81,9 @@ def plot_burn_in_times(L=20):
 
 
 def plot_probability_distribution():
+    """Plots probability distribution for different temperatures"""
     L = "20"
-    for T in ['1.0', '2.1', '2.4']:
+    for T in ["1.0", "2.1", "2.4"]:
         df = pd.read_csv(f"output/samples_L={L}_T={T}.csv")
         plt.title(fr"Estimated probability distribution of $\epsilon$ at $T={T}J/k_B$")
         plt.xlabel(r"$\epsilon [J]$")
@@ -83,6 +97,7 @@ def plot_probability_distribution():
 
 
 def plot_values():
+    """Plots expected values for different lattice sizes"""
     fig, axs = plt.subplots(2, 2, sharex=True)
     fig.suptitle("Plotting estimated values for different sizes of the Ising model")
     dfs = {L: pd.read_csv(f"output/values_L={L}.csv") for L in range(20, 160, 20)}
@@ -101,6 +116,7 @@ def plot_values():
 
 
 def estimate_T_inf(value: str):
+    """Estimates T_inf for different lattice sizes"""
     y = []
     x = []
     label = value if value == "C_v" else r"\chi"
@@ -125,6 +141,7 @@ def estimate_T_inf(value: str):
     plt.grid(True, color="k")
     print(f"Standard error {value}: {linear_fit.stderr}")
     plt.savefig(f"plots/T_inf/estimating_T_inf_{value}.pdf")
+
 
 def main():
     plot_burn_in_times()
