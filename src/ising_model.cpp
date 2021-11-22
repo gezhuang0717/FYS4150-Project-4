@@ -3,6 +3,9 @@
 #include <iostream>
 using namespace std;
 
+// IMPORTANT NOTE:
+// Documentation is found in the header-file
+
 IsingModel::IsingModel(int lattice_length, double T, bool random_spins, int seed){
     L = lattice_length;
     beta = 1/T; 
