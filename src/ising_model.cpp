@@ -1,7 +1,7 @@
 #include "project4/ising_model.hpp"
 #include <cmath>
-#include <iostream> // TODO: rmeove this
-using namespace std; // TODO: and this
+#include <iostream>
+using namespace std;
 
 IsingModel::IsingModel(int lattice_length, double T, bool random_spins, int seed){
     L = lattice_length;
@@ -17,7 +17,6 @@ IsingModel::IsingModel(int lattice_length, double T, bool random_spins, int seed
     precompute_exp_factors();
 }
 
-// Placeholder initialisations function.
 void IsingModel::initialize_spins(int L){
     vector<vector<int>> initial(L, vector<int>(L, 1));
     if (rand_spins){

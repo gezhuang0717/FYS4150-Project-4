@@ -109,9 +109,10 @@ def plot_probability_distribution():
         plt.xlabel(r"$\epsilon$ $[J]$")
         plt.ylabel(fr"$p(\epsilon; {T} J / k_B)$")
         plt.hist(df.epsilon, bins="auto", density=True)
-
         filename = f"plots/distributions/epsilon_L={L}_T={T}.tex"
         save_tikz(filename)
+        print(f"Variance at T={T}: {df.epsilon.var()}")
+        print(f"Expected value at T={T}: {df.epsilon.mean()}")
 
 
 def plot_values():
