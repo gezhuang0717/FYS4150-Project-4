@@ -61,3 +61,7 @@ Options:
    └── zoom.py - for scanning intervals and zooming in on C_v and chi
 
 ```
+
+# Code documentation
+
+For more in depth description of files see the docstring in the python file for python and the header files for c++.
