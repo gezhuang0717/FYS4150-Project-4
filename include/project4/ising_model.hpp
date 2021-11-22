@@ -9,9 +9,16 @@ using namespace std;
 class IsingModel{
     public:
         IsingModel(int L, double T, bool random_spins, int seed);
+        /**
+         * @brief Get the matrix of spins
+         * 
+         * @return vector<vector<int>>
+         */
         vector<vector<int>> get_spins();
-        // Performs one Monte Carlo cycle of Metropolis algorithm and
-        // Updates energy- and magnetization-values.
+        /**
+         * @brief Performs one iteration of Metropolis algorithm
+         * 
+         */
         void metropolis();
         /**
          * @brief Get the energy of the IsingModel
