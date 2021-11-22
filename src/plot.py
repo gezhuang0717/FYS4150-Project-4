@@ -50,11 +50,11 @@ def plot_burn_in_times(L=20):
         df = pd.read_csv("output/" + filename)
 
         axs[i][0].plot(df.N, df.expected_E)
-        axs[i][0].set_title("$<\epsilon>$ for T=" + str(T))
-        axs[i][0].set(xlabel=("N"), ylabel=("$<\epsilon>$ [J/$k_B$]"))
+        axs[i][0].set_title("$<\epsilon>$ for T=" + str(T) + "J / $k_B$")
+        axs[i][0].set(xlabel=("N"), ylabel=("$<\epsilon>$ [J]"))
 
         axs[i][1].plot(df.N, df.expected_M)
-        axs[i][1].set_title("$<|m|>$ for T=" + str(T))
+        axs[i][1].set_title("$<|m|>$ for T=" + str(T) + "J / $k_B$")
         axs[i][1].set(xlabel=("N"), ylabel=("$<|m|>$ [1]"))
     fig.suptitle("Expected values for unordered initial spins")
     plt.tight_layout()
@@ -66,11 +66,11 @@ def plot_burn_in_times(L=20):
         df = pd.read_csv("output/" + filename)
 
         axs[i][0].plot(df.N, df.expected_E)
-        axs[i][0].set_title("$<\epsilon>$ for T=" + str(T))
-        axs[i][0].set(xlabel=("N"), ylabel=("$<\epsilon>$ [J/$k_B$]"))
+        axs[i][0].set_title("$<\epsilon>$ for T=" + str(T) + "J / $k_B$")
+        axs[i][0].set(xlabel=("N"), ylabel=("$<\epsilon>$ [J]"))
 
         axs[i][1].plot(df.N, df.expected_M)
-        axs[i][1].set_title("$<|m|>$ for T=" + str(T))
+        axs[i][1].set_title("$<|m|>$ for T=" + str(T) + "J / $k_B$")
         axs[i][1].set(xlabel=("N"), ylabel=("$<|m|>$ [1]"))
     fig.suptitle("Expected values for ordered initial spins")
     plt.tight_layout()
@@ -101,13 +101,13 @@ def plot_values():
     fig, axs = plt.subplots(2, 2, sharex=True)
     fig.suptitle("Plotting estimated values for different sizes of the Ising model")
     dfs = {L: pd.read_csv(f"output/values_L={L}.csv") for L in range(20, 160, 20)}
-    for i, (value, ylabel) in enumerate(zip(["<epsilon>", "<|m|>", "C_v", "chi"], [r"<\epsilon>", "<|m|>", "C_v", r"\chi"])):
+    for i, (value, ylabel, unit) in enumerate(zip(["<epsilon>", "<|m|>", "C_v", "chi"], [r"<\epsilon>", "<|m|>", "C_v", r"\chi"], ["J", "1", "k_B", "1 / J"])):
         plt.sca(axs[i // 2] [i % 2])
         for L in range(40, 160, 20):
             df = dfs[L]
             df.sort_values("T", inplace=True, ignore_index=True)
             plt.plot(df["T"], df[value], label=f"L={L}")
-        plt.ylabel(f"${ylabel}$")
+        plt.ylabel(f"${ylabel}$ [${unit}$]")
         plt.xlabel("T")
         plt.legend(prop={'size': 6})
     plt.tight_layout()
@@ -136,8 +136,8 @@ def estimate_T_inf(value: str):
     plt.title(fr"Estimate using ${label}$")
 
     plt.yticks([estimate], [f"{estimate: .3f}"])
-    plt.ylabel("T_C")
-    plt.xlabel("$L^{-1}$")
+    plt.ylabel("$T_c$ [$J / k_B$]")
+    plt.xlabel("$L^{-1}$ [1]")
     plt.grid(True, color="k")
     print(f"Standard error {value}: {linear_fit.stderr}")
     plt.savefig(f"plots/T_inf/estimating_T_inf_{value}.pdf")
