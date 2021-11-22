@@ -133,7 +133,7 @@ def estimate_T_inf(value: str):
     plt.plot([0] + x, estimate + linear_fit.slope * np.asarray([0] + x))
     plt.scatter([0], [estimate], s=40, label=fr"$T_c(\infty) = {estimate: .3f}$")
     plt.legend()
-    plt.title(fr"Estimate using ${label}$")
+    plt.title(fr"Estimating $T_c(\infty)$ using ${label}$")
 
     plt.yticks([estimate], [f"{estimate: .3f}"])
     plt.ylabel("$T_c$ [$J / k_B$]")
