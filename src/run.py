@@ -5,6 +5,7 @@ from collections import defaultdict
 import plot
 import analytical_ising_model
 import zoom
+import subprocess
 
 def get_all_states(L):
     """
@@ -80,6 +81,12 @@ if __name__ == "__main__":
         action="store_true",
     )
     parser.add_argument(
+        "-r",
+        "--reproduce",
+        help="Reproduce the experiment as done in the report, using the same seed",
+        action="store_true",
+    )
+    parser.add_argument(
         "-a",
         "--all",
         help="To run everything",
@@ -98,3 +105,11 @@ if __name__ == "__main__":
         analytical_ising_model.main()
     if args.zoom or args.all:
         zoom.main()
+    if args.reproduce:
+        subprocess.run(["./runner", "-t"])
+        subprocess.run(["./runner", "-b"])
+        subprocess.run(["./runner", "-w", "20", "1.0", "8888"])
+        subprocess.run(["./runner", "-w", "20", "2.4", "8889"])
+        subprocess.run(["./runner", "-s"])
+        zoom.main()
+        plot.main()
