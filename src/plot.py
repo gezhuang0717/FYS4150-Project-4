@@ -5,8 +5,21 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import scipy.stats as sts
 import subprocess
+import matplotlib
 
 sns.set_theme()
+#  matplotlib.rcParams["mathtext.fontset"] = "stix"
+#  matplotlib.rcParams["font.family"] = "STIXGeneral"
+
+#  plt.rcParams["text.latex.preamble"] = [r"\usepackage{lmodern}"]
+#  # Options
+#  params = {
+#      "text.usetex": True,
+#      "font.size": 10,
+#      "font.family": "lmodern",
+#      "text.latex.unicode": True,
+#  }
+#  plt.rcParams.update(params)
 
 
 def plot_abs_m_unordered(L=20):
@@ -28,54 +41,32 @@ def plot_abs_m_unordered(L=20):
 
 
 def plot_burn_in_times(L=20):
-    """Plots burn in time for different temperatures
+    """Plots burn in time for different temperatures for both ordered and unordered
 
     Parameters
     ----------
         L : int
             Lattice size
     """
-    filenames_ordered = [
-        "burn_in_L_" + str(L) + "_T_1.000000_nonrandom.csv",
-        "burn_in_L_" + str(L) + "_T_2.400000_nonrandom.csv",
-    ]
-    filenames_unordered = [
-        "burn_in_L_" + str(L) + "_T_1.000000_random.csv",
-        "burn_in_L_" + str(L) + "_T_2.400000_random.csv",
-    ]
-
     temps = [1, 2.4]
-    fig, axs = plt.subplots(2, 2)
-    for i, (T, filename) in enumerate(zip(temps, filenames_unordered)):
-        df = pd.read_csv("output/" + filename)
+    for randomness, order_type in zip(
+        ["random", "nonrandom"], ["unordered", "ordered"]
+    ):
+        _, axs = plt.subplots(2, 2)
+        filenames = [f"burn_in_L_{L}_T_{T:.6f}_{randomness}.csv" for T in temps]
+        for i, (T, filename) in enumerate(zip(temps, filenames)):
+            df = pd.read_csv("output/" + filename)
 
-        axs[i][0].plot(df.N, df.expected_E)
-        axs[i][0].set_title("$<\epsilon>$ for T=" + str(T))
-        axs[i][0].set(xlabel=("N"), ylabel=("$<\epsilon>$ [J/$k_B$]"))
+            axs[i][0].plot(df.N, df.expected_E)
+            axs[i][0].set_title(rf"$<\epsilon>$ for $T={T}$")
+            axs[i][0].set(xlabel=(r"$N$"), ylabel=(r"$<\epsilon>$ [J/$k_B$]"))
 
-        axs[i][1].plot(df.N, df.expected_M)
-        axs[i][1].set_title("$<|m|>$ for T=" + str(T))
-        axs[i][1].set(xlabel=("N"), ylabel=("$<|m|>$ [1]"))
-    fig.suptitle("Expected values for unordered initial spins")
-    plt.tight_layout()
-    plt.savefig("plots/burn_in/burn_in_time_unordered_L_equals_" + str(L) + ".pdf")
-    plt.cla()
-
-    fig, axs = plt.subplots(2, 2)
-    for i, (T, filename) in enumerate(zip(temps, filenames_ordered)):
-        df = pd.read_csv("output/" + filename)
-
-        axs[i][0].plot(df.N, df.expected_E)
-        axs[i][0].set_title("$<\epsilon>$ for T=" + str(T))
-        axs[i][0].set(xlabel=("N"), ylabel=("$<\epsilon>$ [J/$k_B$]"))
-
-        axs[i][1].plot(df.N, df.expected_M)
-        axs[i][1].set_title("$<|m|>$ for T=" + str(T))
-        axs[i][1].set(xlabel=("N"), ylabel=("$<|m|>$ [1]"))
-    fig.suptitle("Expected values for ordered initial spins")
-    plt.tight_layout()
-    plt.savefig("plots/burn_in/burn_in_time_ordered_L_equals_" + str(L) + ".pdf")
-    plt.cla()
+            axs[i][1].plot(df.N, df.expected_M)
+            axs[i][1].set_title(rf"$<|m|>$ for $T={T}$")
+            axs[i][1].set(xlabel=(r"$N$"), ylabel=(r"$<|m|>$ [1]"))
+        plt.tight_layout()
+        plt.savefig(f"plots/burn_in/burn_in_time_{order_type}_L_equals_{L}.pdf")
+        plt.cla()
 
 
 def plot_probability_distribution():
@@ -129,7 +120,7 @@ def estimate_T_inf():
     axs[0].plot([0] + x, estimate_C_v + linear_fit_C_v.slope * np.asarray([0] + x))
     axs[0].plot([0, 0], [estimate_C_v, max(y_C_v)], color="black")
     axs[0].scatter(
-        [0], [estimate_C_v], s=40, label=fr"$T_c(\infty) = {estimate_C_v: .3f}$"
+        [0], [estimate_C_v], s=40, label=fr"$T_c(\infty) = {estimate_C_v: .5f}$"
     )
     axs[0].legend()
     axs[0].set_title(r"Estimate using $C_v$")
@@ -139,7 +130,7 @@ def estimate_T_inf():
     axs[1].plot([0] + x, estimate_chi + linear_fit_chi.slope * np.asarray([0] + x))
     axs[1].plot([0, 0], [estimate_chi, max(y_chi)], color="black")
     axs[1].scatter(
-        [0], [estimate_chi], s=40, label=fr"$T_c(\infty) = {estimate_chi: .3f}$"
+        [0], [estimate_chi], s=40, label=fr"$T_c(\infty) = {estimate_chi: .5f}$"
     )
     axs[1].legend()
     axs[1].set_title(r"Estimate using $\chi$")
@@ -148,15 +139,16 @@ def estimate_T_inf():
     plt.yticks([estimate_C_v], [f"{estimate_C_v: .3f}"])
     plt.sca(axs[1])
     plt.yticks([estimate_chi], [f"{estimate_chi: .3f}"])
-    print(estimate_C_v)
+    #  print(estimate_C_v)
     plt.savefig("plots/T_inf/estimating_T_inf.pdf")
 
 
 def main():
-    # plot_burn_in_time()
-    # plot_probability_distribution()
-    plot_values()
-    estimate_T_inf()
+    plot_burn_in_times()
+    #  plot_probability_distribution()
+    #  plot_values()
+    #  estimate_T_inf()
+    #  test_tikz()
 
 
 if __name__ == "__main__":
