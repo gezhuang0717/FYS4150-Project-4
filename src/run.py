@@ -7,9 +7,14 @@ import analytical_ising_model
 import zoom
 import subprocess
 
+
 def get_all_states(L):
-    """
-    List all possible states of a LxL lattice (equivelant states grouped)
+    """List all possible states of a LxL lattice (equivelant states grouped)
+
+    Parameters
+    ----------
+        L : int
+            Lattice size
     """
     N = L ** 2
 
