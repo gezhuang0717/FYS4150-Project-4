@@ -60,7 +60,9 @@ def get_all_states(L):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="To run the python and julia scripts")
+    parser = argparse.ArgumentParser(
+        description="To run the python scripts and some the c++ files"
+    )
     parser.add_argument(
         "-s",
         "--states",
